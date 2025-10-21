@@ -12,6 +12,7 @@ public class Email {
 
     private Integer Id;
     public String Endereco;
+    public Cliente Cliente;
 
     public Integer getId() {
         return Id;

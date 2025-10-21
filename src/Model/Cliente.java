@@ -1,5 +1,7 @@
 package Model;
 
+import java.util.List;
+
 public class Cliente {
 
     public Cliente() {
@@ -16,6 +18,8 @@ public class Cliente {
 
     private Integer Id;
     public String Nome;
+    public List<Email> Emails;
+    public Endereco Endereco;
     private Date DataCadastro;
     private Date DataInativacao;
     public TipoCliente Tipo;
