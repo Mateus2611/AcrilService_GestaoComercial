@@ -4,23 +4,25 @@ import Model.Cliente;
 import Service.Interface.IOperacoesGenericasService;
 
 public class ClienteService implements IOperacoesGenericasService<Cliente, Integer> {
+
+
     @Override
-    public Cliente Create(Cliente element) {
+    public Cliente Criar(Cliente objeto) {
         return null;
     }
 
     @Override
-    public Cliente SearchAll() {
+    public Cliente BuscaGeral() {
         return null;
     }
 
     @Override
-    public Cliente Update(Integer id, Cliente element) {
+    public Cliente Atualizar(Integer integer, Cliente objeto) {
         return null;
     }
 
     @Override
-    public Cliente Delete(Integer id) {
+    public Cliente Excluir(Integer integer) {
         return null;
     }
 }

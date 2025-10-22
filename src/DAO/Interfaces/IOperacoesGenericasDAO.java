@@ -1,6 +1,6 @@
-package Service.Interface;
+package DAO.Interfaces;
 
-public interface IOperacoesGenericasService<T, ID> {
+public interface IOperacoesGenericasDAO<ID, T> {
 
     public T Criar(T objeto);
 

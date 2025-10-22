@@ -4,23 +4,24 @@ import Model.Venda;
 import Service.Interface.IOperacoesGenericasService;
 
 public class VendaService implements IOperacoesGenericasService<Venda, Integer> {
+
     @Override
-    public Venda Create(Venda element) {
+    public Venda Criar(Venda objeto) {
         return null;
     }
 
     @Override
-    public Venda SearchAll() {
+    public Venda BuscaGeral() {
         return null;
     }
 
     @Override
-    public Venda Update(Integer integer, Venda element) {
+    public Venda Atualizar(Integer integer, Venda objeto) {
         return null;
     }
 
     @Override
-    public Venda Delete(Integer integer) {
+    public Venda Excluir(Integer integer) {
         return null;
     }
 }

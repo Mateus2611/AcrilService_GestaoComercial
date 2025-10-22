@@ -6,24 +6,22 @@ public class Endereco {
     }
 
     public Endereco(Integer id, String cep, String bairro,
-                    String estado, String cidade, String logradouro, String complemento) {
+                    String estado, String cidade, String logradouro) {
         Id = id;
         Cep = cep;
         Bairro = bairro;
         Estado = estado;
         Cidade = cidade;
         Logradouro = logradouro;
-        Complemento = complemento;
     }
 
     public Endereco(String cep, String bairro, String estado,
-                    String cidade, String logradouro, String complemento) {
+                    String cidade, String logradouro) {
         Cep = cep;
         Bairro = bairro;
         Estado = estado;
         Cidade = cidade;
         Logradouro = logradouro;
-        Complemento = complemento;
     }
 
     private Integer Id;
@@ -32,10 +30,13 @@ public class Endereco {
     public String Estado;
     public String Cidade;
     public String Logradouro;
-    public String Complemento;
 
     public Integer getId() {
         return Id;
+    }
+
+    public void setId(Integer id) {
+        Id = id;
     }
 
     public String getCep() {
@@ -78,11 +79,15 @@ public class Endereco {
         Logradouro = logradouro;
     }
 
-    public String getComplemento() {
-        return Complemento;
-    }
-
-    public void setComplemento(String complemento) {
-        Complemento = complemento;
+    @Override
+    public String toString() {
+        return "Endereco{" +
+                "Id=" + Id +
+                ", Cep='" + Cep + '\'' +
+                ", Bairro='" + Bairro + '\'' +
+                ", Estado='" + Estado + '\'' +
+                ", Cidade='" + Cidade + '\'' +
+                ", Logradouro='" + Logradouro + '\'' +
+                '}';
     }
 }
