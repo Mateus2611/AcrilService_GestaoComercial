@@ -5,7 +5,8 @@ public class Endereco {
     public Endereco() {
     }
 
-    public Endereco(Integer id, String cep, String bairro, String estado, String cidade, String logradouro, String complemento) {
+    public Endereco(Integer id, String cep, String bairro,
+                    String estado, String cidade, String logradouro, String complemento) {
         Id = id;
         Cep = cep;
         Bairro = bairro;
@@ -15,7 +16,8 @@ public class Endereco {
         Complemento = complemento;
     }
 
-    public Endereco(String cep, String bairro, String estado, String cidade, String logradouro, String complemento) {
+    public Endereco(String cep, String bairro, String estado,
+                    String cidade, String logradouro, String complemento) {
         Cep = cep;
         Bairro = bairro;
         Estado = estado;

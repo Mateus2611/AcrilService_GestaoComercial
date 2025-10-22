@@ -1,5 +1,6 @@
 package Model;
 
+import java.util.Date;
 import java.util.List;
 
 public class Cliente {
@@ -7,7 +8,8 @@ public class Cliente {
     public Cliente() {
     }
 
-    public Cliente(Integer id, String nome, Date dataCadastro, Date dataInativacao, TipoCliente tipo, StatusCliente status) {
+    public Cliente(Integer id, String nome, Date dataCadastro,
+                   Date dataInativacao, TipoCliente tipo, StatusCliente status) {
         Id = id;
         Nome = nome;
         DataCadastro = dataCadastro;
@@ -20,8 +22,8 @@ public class Cliente {
     public String Nome;
     public List<Email> Emails;
     public Endereco Endereco;
-    private Date DataCadastro;
-    private Date DataInativacao;
+    public Date DataCadastro;
+    public Date DataInativacao;
     public TipoCliente Tipo;
     private StatusCliente Status;
 

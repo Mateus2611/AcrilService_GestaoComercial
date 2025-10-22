@@ -5,9 +5,10 @@ public class Email {
     public Email() {
     }
 
-    public Email(Integer id, String endereco) {
+    public Email(Integer id, String endereco, Model.Cliente cliente) {
         Id = id;
         Endereco = endereco;
+        Cliente = cliente;
     }
 
     private Integer Id;
