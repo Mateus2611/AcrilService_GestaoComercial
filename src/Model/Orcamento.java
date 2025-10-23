@@ -1,7 +1,7 @@
 package Model;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.sql.Date;
 
 public class Orcamento {
 
@@ -43,7 +43,7 @@ public class Orcamento {
         Id = id;
     }
 
-    public Date getDataCriacao() {
+    public java.sql.Date getDataCriacao() {
         return DataCriacao;
     }
 
@@ -51,7 +51,7 @@ public class Orcamento {
         DataCriacao = dataCriacao;
     }
 
-    public Date getDataValidade() {
+    public java.sql.Date getDataValidade() {
         return DataValidade;
     }
 
@@ -69,6 +69,10 @@ public class Orcamento {
 
     public StatusOrcamento getStatus() {
         return Status;
+    }
+
+    public BigDecimal getDesconto() {
+        return Desconto;
     }
 
     public void setStatus(StatusOrcamento status) {
