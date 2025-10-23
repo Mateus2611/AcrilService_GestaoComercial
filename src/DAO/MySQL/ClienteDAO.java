@@ -2,6 +2,8 @@ package DAO.MySQL;
 
 import DAO.Interfaces.IOperacoesGenericasDAO;
 import DAO.JDBC.ConexaoDb;
+import Model.Cliente;
+import Model.Produto;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -24,6 +26,7 @@ public class ClienteDAO implements IOperacoesGenericasDAO {
     public Object BuscaGeral() {
         return null;
     }
+
 
     @Override
     public Object Atualizar(Object o, Object objeto) {
