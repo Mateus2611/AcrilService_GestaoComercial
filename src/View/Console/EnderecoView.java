@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 enum Opcoes {
-    CRIAR
+    Criar
 }
 
 public class EnderecoView {
@@ -24,12 +24,11 @@ public class EnderecoView {
         String resp = sc.next();
 
         switch (Opcoes.valueOf(resp)) {
-            case CRIAR -> CriarEndereco();
+            case Criar -> CriarEndereco();
         }
     }
 
     private void CriarEndereco() {
-
 
         EnderecoDAO dao = new EnderecoDAO(ConexaoDb.openConnection());
         EnderecoService endereco = new EnderecoService(dao);

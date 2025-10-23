@@ -5,6 +5,7 @@ import DAO.JDBC.ConexaoDb;
 import Model.Endereco;
 
 import java.sql.*;
+import java.util.List;
 
 public class EnderecoDAO implements IOperacoesGenericasDAO<Integer, Endereco> {
 
@@ -55,8 +56,40 @@ public class EnderecoDAO implements IOperacoesGenericasDAO<Integer, Endereco> {
     }
 
     @Override
-    public Endereco BuscaGeral() {
-        return null;
+    public List<Endereco> BuscaGeral() {
+       PreparedStatement statement = null;
+       List<Endereco> enderecos = null;
+
+        try {
+
+            statement = _connection.prepareStatement(
+                    "SELECT * FROM `Endereco`;"
+            );
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                Endereco objeto = new Endereco(
+                        resultSet.getInt("Id"),
+                        resultSet.getString("CEP"),
+                        resultSet.getString("Bairro"),
+                        resultSet.getString("Estado"),
+                        resultSet.getString("Cidade"),
+                        resultSet.getString("Logradouro"));
+
+                enderecos.add(objeto);
+            }
+
+            if (enderecos == null)
+                throw new RuntimeException("Não existem endereços cadastrados");
+
+            return enderecos;
+
+        } catch (SQLException e) {
+            throw new RuntimeException((e.getMessage()));
+        } finally {
+            ConexaoDb.closeStatement(statement);
+        }
     }
 
     @Override
@@ -65,7 +98,5 @@ public class EnderecoDAO implements IOperacoesGenericasDAO<Integer, Endereco> {
     }
 
     @Override
-    public Endereco Excluir(Integer integer) {
-        return null;
-    }
+    public void Excluir(Integer integer) {}
 }
