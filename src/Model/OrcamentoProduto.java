@@ -15,6 +15,7 @@ public class OrcamentoProduto {
     private Integer IdProduto;
     public Integer Quantidade;
 
+
     public int getIdOrcamento() {
         return IdOrcamento;
     }
