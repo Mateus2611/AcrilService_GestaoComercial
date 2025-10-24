@@ -93,7 +93,7 @@ public class EnderecoDAO implements IOperacoesGenericasDAO<Integer, Endereco> {
     }
 
     public Endereco BuscaPorId(Integer id) {
-        Statement statement = null;
+        PreparedStatement statement = null;
 
         try {
 

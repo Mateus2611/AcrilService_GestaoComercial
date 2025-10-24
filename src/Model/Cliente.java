@@ -8,6 +8,18 @@ public class Cliente {
     public Cliente() {
     }
 
+    public Cliente(Integer id, String nome, List<Email> emails, Endereco endereco, Date dataCadastro,
+                   Date dataInativacao, TipoCliente tipo, StatusCliente status) {
+        Id = id;
+        Nome = nome;
+        Emails = emails;
+        Endereco = endereco;
+        DataCadastro = dataCadastro;
+        DataInativacao = dataInativacao;
+        Tipo = tipo;
+        Status = status;
+    }
+
     public Cliente(Integer id, String nome, Date dataCadastro,
                    Date dataInativacao, TipoCliente tipo, StatusCliente status) {
         Id = id;
@@ -29,6 +41,30 @@ public class Cliente {
 
     public Integer getId() {
         return Id;
+    }
+
+    public void setId(Integer id) {
+        Id = id;
+    }
+
+    public List<Email> getEmails() {
+        return Emails;
+    }
+
+    public void setEmails(List<Email> emails) {
+        Emails = emails;
+    }
+
+    public Endereco getEndereco() {
+        return Endereco;
+    }
+
+    public void setEndereco(Endereco endereco) {
+        Endereco = endereco;
+    }
+
+    public void setDataCadastro(Date dataCadastro) {
+        DataCadastro = dataCadastro;
     }
 
     public Date getDataCadastro() {
@@ -66,14 +102,14 @@ public class Cliente {
     public void setStatus(StatusCliente status) {
         Status = status;
     }
-}
 
-enum TipoCliente {
-    CPF,
-    CNPJ
-}
+    public enum TipoCliente {
+        CPF,
+        CNPJ
+    }
 
-enum StatusCliente {
-    ATIVO,
-    INATIVO
+    public enum StatusCliente {
+        ATIVO,
+        INATIVO
+    }
 }
