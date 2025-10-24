@@ -1,6 +1,5 @@
 package DAO.MySQL;
 
-import DAO.Interfaces.IOperacoesGenericasDAO;
 import DAO.JDBC.ConexaoDb;
 import Model.Orcamento;
 
@@ -8,7 +7,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OrcamentoDAO implements IOperacoesGenericasDAO<Integer, Orcamento> {
+public class OrcamentoDAO {
 
     private final Connection _connection;
 
@@ -16,7 +15,7 @@ public class OrcamentoDAO implements IOperacoesGenericasDAO<Integer, Orcamento> 
         _connection = connection;
     }
 
-    @Override
+
     public Orcamento Criar(Orcamento objeto) {
         PreparedStatement statement = null;
 
@@ -55,7 +54,6 @@ public class OrcamentoDAO implements IOperacoesGenericasDAO<Integer, Orcamento> 
         return objeto;
     }
 
-    @Override
     public List<Orcamento> BuscaGeral() {
         PreparedStatement statement = null;
         List<Orcamento> orcamentos = new ArrayList<>();
@@ -98,61 +96,6 @@ public class OrcamentoDAO implements IOperacoesGenericasDAO<Integer, Orcamento> 
 
         } catch (SQLException e) {
             throw new RuntimeException((e.getMessage()));
-        } finally {
-            ConexaoDb.closeStatement(statement);
-        }
-    }
-
-    @Override
-    public Orcamento Atualizar(Integer integer, Orcamento objeto) {
-        PreparedStatement statement = null;
-
-        try {
-            statement = _connection.prepareStatement(
-                    "UPDATE `Orcamento`"
-                            + " SET `Data_Validade` = ?, `Valor` = ?, `Desconto` = ?, `Status_Orcamento` = ?"
-                            + " WHERE `Id` = ?"
-            );
-
-            statement.setDate(1, objeto.getDataValidade());
-            statement.setBigDecimal(2, objeto.getValor());
-            statement.setBigDecimal(3, objeto.getDesconto());
-            statement.setString(4, objeto.getStatus().name());
-            statement.setInt(5, integer);
-
-            int rowsAffected = statement.executeUpdate();
-
-            if (rowsAffected == 0)
-                throw new RuntimeException("Nenhum orçamento encontrado" + integer);
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } finally {
-            ConexaoDb.closeStatement(statement);
-        }
-        return objeto;
-    }
-
-    @Override
-    public void Excluir(Integer integer) {
-        PreparedStatement statement = null;
-
-        try {
-            statement = _connection.prepareStatement(
-                    "DELETE FROM `Orcamento`" +
-                            " WHERE `Id` = ?"
-            );
-
-            statement.setInt(1, integer);
-
-            int rowsAffected = statement.executeUpdate();
-
-            if (rowsAffected == 0) {
-                System.err.println("Nenhum orçamento excluído. ID não encontrado: " + integer);
-            }
-
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao excluir orçamento: " + e.getMessage(), e);
         } finally {
             ConexaoDb.closeStatement(statement);
         }

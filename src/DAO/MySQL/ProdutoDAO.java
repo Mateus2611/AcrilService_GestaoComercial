@@ -123,11 +123,7 @@ public class ProdutoDAO implements IOperacoesGenericasDAO<Integer, Produto> {
 
             statement.setInt(1, integer);
 
-            int rowsAffected = statement.executeUpdate();
-
-            if (rowsAffected == 0)
-                System.err.println("Nenhum produto excluído. Id não encontrado: " + integer);
-
+            statement.executeUpdate();
 
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao excluir produto: " + e.getMessage(), e);
