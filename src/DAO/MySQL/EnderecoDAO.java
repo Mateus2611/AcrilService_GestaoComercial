@@ -94,9 +94,62 @@ public class EnderecoDAO implements IOperacoesGenericasDAO<Integer, Endereco> {
 
     @Override
     public Endereco Atualizar(Integer integer, Endereco objeto) {
-        return null;
+        PreparedStatement statement = null;
+
+        try {
+
+            statement = _connection.prepareStatement(
+                    "UPDATE `Endereco` SET `CEP` = ?, `Bairro` = ?, `Estado` = ?, `Cidade` = ?, `Logradouro` = ? WHERE `endereco`.`Id` = ?;",
+                    Statement.RETURN_GENERATED_KEYS
+            );
+
+            statement.setString(1, objeto.getCep());
+            statement.setString(2, objeto.getBairro());
+            statement.setString(3, objeto.getEstado());
+            statement.setString(4, objeto.getCidade());
+            statement.setString(5, objeto.getLogradouro());
+            statement.setInt(6, integer);
+
+            int rowsAffected = statement.executeUpdate();
+
+            if (rowsAffected <= 0)
+                throw new RuntimeException("Erro ao atualizar endereço");
+
+            ResultSet resultSet = statement.getGeneratedKeys();
+
+            if (resultSet.next())
+                objeto.setId(resultSet.getInt(1));
+
+            ConexaoDb.closeResultSet(resultSet);
+
+            return objeto;
+
+        } catch (SQLException e) {
+            throw new RuntimeException((e.getMessage()));
+        } finally {
+            ConexaoDb.closeStatement(statement);
+        }
     }
 
     @Override
-    public void Excluir(Integer integer) {}
+    public void Excluir(Integer integer) {
+        PreparedStatement statement = null;
+
+        try {
+
+            statement = _connection.prepareStatement(
+                    "DELETE FROM `Endereco` WHERE Id = ?;"
+            );
+
+            statement.setInt(1, integer);
+
+            statement.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException((e.getMessage()));
+        } finally {
+            ConexaoDb.closeStatement(statement);
+        }
+
+    }
 }
