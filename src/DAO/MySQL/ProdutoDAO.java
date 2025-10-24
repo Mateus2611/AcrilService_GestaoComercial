@@ -5,6 +5,8 @@ import DAO.JDBC.ConexaoDb;
 import Model.Produto;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProdutoDAO implements IOperacoesGenericasDAO<Integer, Produto> {
 
@@ -20,8 +22,8 @@ public class ProdutoDAO implements IOperacoesGenericasDAO<Integer, Produto> {
 
         try {
             statement = _connection.prepareStatement(
-                    "INSERT INTO `Produto` (`nome`, `valor`,"
-                            + "VALUES ( ?, ? );",
+                    "INSERT INTO `Produto` (`Nome`, `Valor`)"
+                            + " VALUES ( ?, ? );",
                     Statement.RETURN_GENERATED_KEYS
             );
 
@@ -40,45 +42,45 @@ public class ProdutoDAO implements IOperacoesGenericasDAO<Integer, Produto> {
 
             ConexaoDb.closeResultSet(resultSet);
 
-            return objeto;
-
         } catch (SQLException e) {
             throw new RuntimeException(e.getMessage());
         } finally {
-            ConexaoDb.closeStatement(statement);
-            ConexaoDb.closeStatement(statement);
-        }
-
-    }
-
-    @Override
-    public Produto BuscaGeral() {
-        return null;
-    }
-
-    //@Override
-    public Produto BuscaGeral(Produto objeto) {
-        PreparedStatement statement = null;
-
-        try {
-            statement = _connection.prepareStatement(
-                    "SELECT * FROM 'Produto'",
-                    Statement.RETURN_GENERATED_KEYS
-            );
-
-            int rowsAffected = statement.executeUpdate();
-            if (rowsAffected == 0)
-                throw new RuntimeException("Erro ao buscar produto");
-
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e.getMessage());
-        } finally {
-            ConexaoDb.closeConnection();
             ConexaoDb.closeStatement(statement);
         }
         return objeto;
+    }
 
+    @Override
+    public List<Produto> BuscaGeral() {
+        PreparedStatement statement = null;
+        List<Produto> produtos = new ArrayList<>();
+
+        try {
+            statement = _connection.prepareStatement(
+                    "SELECT * FROM `Produto`"
+            );
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+
+                Produto objeto = new Produto(
+                        resultSet.getInt("Id"),
+                        resultSet.getString("Nome"),
+                        resultSet.getBigDecimal("Valor"));
+
+                produtos.add(objeto);
+            }
+
+            ConexaoDb.closeResultSet(resultSet);
+
+            return produtos;
+
+        } catch (SQLException e) {
+            throw new RuntimeException((e.getMessage()));
+        } finally {
+            ConexaoDb.closeStatement(statement);
+        }
     }
 
     @Override
@@ -87,51 +89,46 @@ public class ProdutoDAO implements IOperacoesGenericasDAO<Integer, Produto> {
 
         try {
             statement = _connection.prepareStatement(
-                    "UPDATE ´Produto´"
-                            + "SET nome = ?, valor = ?"
-                            + "WHERE 'Id' = ?)",
-                    Statement.RETURN_GENERATED_KEYS
+                    "UPDATE `Produto`"
+                            + " SET `Nome` = ?, `Valor` = ?"
+                            + " WHERE `Id` = ?"
             );
 
             statement.setString(1, objeto.getNome());
             statement.setBigDecimal(2, objeto.getValor());
-            statement.setInt(3, objeto.getId());
+            statement.setInt(3, integer);
 
             int rowsAffected = statement.executeUpdate();
 
             if (rowsAffected == 0)
-                throw new RuntimeException("Erro ao atualizar valores");
+                throw new RuntimeException("Nenhum produto encontrado" + integer);
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            ConexaoDb.closeConnection();
             ConexaoDb.closeStatement(statement);
         }
         return objeto;
     }
 
     @Override
-    public Produto Excluir(Integer integer) {
+    public void Excluir(Integer integer) {
         PreparedStatement statement = null;
 
         try {
             statement = _connection.prepareStatement(
-                    "DELETE from 'Produto'" +
-                            "WHERE 'Id' = ?)",
-                    Statement.RETURN_GENERATED_KEYS
+                    "DELETE FROM `Produto`" +
+                            " WHERE `Id` = ?"
             );
 
             statement.setInt(1, integer);
 
-            int rowsAffected = statement.executeUpdate();
+            statement.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao excluir produto");
+            throw new RuntimeException("Erro ao excluir produto: " + e.getMessage(), e);
         } finally {
-            ConexaoDb.closeConnection();
             ConexaoDb.closeStatement(statement);
         }
-        return null;
     }
 }

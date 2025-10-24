@@ -9,9 +9,10 @@ public class Orcamento {
     public Orcamento() {
     }
 
-    public Orcamento(Integer id, Date dataCriacao, Date dataValidade,
+    public Orcamento(Integer id, Integer idCliente, Date dataCriacao, Date dataValidade,
                      BigDecimal valor, StatusOrcamento status, BigDecimal desconto) {
         Id = id;
+        IdCliente = idCliente;
         DataCriacao = dataCriacao;
         DataValidade = dataValidade;
         Valor = valor;
@@ -19,8 +20,9 @@ public class Orcamento {
         Desconto = desconto;
     }
 
-    public Orcamento(Date dataCriacao, Date dataValidade,
+    public Orcamento(Integer idCliente, Date dataCriacao, Date dataValidade,
                      BigDecimal valor, StatusOrcamento status, BigDecimal desconto) {
+        IdCliente = idCliente;
         DataCriacao = dataCriacao;
         DataValidade = dataValidade;
         Valor = valor;
@@ -29,6 +31,7 @@ public class Orcamento {
     }
 
     private Integer Id;
+    private Integer IdCliente;
     public Date DataCriacao;
     public Date DataValidade;
     public BigDecimal Valor;
@@ -41,6 +44,14 @@ public class Orcamento {
 
     public void setId(Integer id) {
         Id = id;
+    }
+
+    public Integer getIdCliente() {
+        return IdCliente;
+    }
+
+    public void setIdCliente(Integer idCliente) {
+        IdCliente = idCliente;
     }
 
     public java.sql.Date getDataCriacao() {
@@ -79,7 +90,7 @@ public class Orcamento {
         Status = status;
     }
 
-    enum StatusOrcamento {
+    public enum StatusOrcamento {
         APROVADO,
         REJEITADO
     }

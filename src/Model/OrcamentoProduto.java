@@ -15,27 +15,27 @@ public class OrcamentoProduto {
     private Integer IdProduto;
     public Integer Quantidade;
 
-    public int getIdOrcamento() {
+    public Integer getIdOrcamento() {
         return IdOrcamento;
     }
 
-    public void setIdOrcamento(int idOrcamento) {
+    public void setIdOrcamento(Integer idOrcamento) {
         IdOrcamento = idOrcamento;
     }
 
-    public int getIdProduto() {
+    public Integer getIdProduto() {
         return IdProduto;
     }
 
-    public void setIdProduto(int idProduto) {
+    public void setIdProduto(Integer idProduto) {
         IdProduto = idProduto;
     }
 
-    public int getQuantidade() {
+    public Integer getQuantidade() {
         return Quantidade;
     }
 
-    public void setQuantidade(int quantidade) {
-        this.Quantidade = quantidade;
+    public void setQuantidade(Integer quantidade) {
+        Quantidade = quantidade;
     }
 }
