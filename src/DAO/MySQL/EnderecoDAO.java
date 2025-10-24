@@ -80,10 +80,10 @@ public class EnderecoDAO implements IOperacoesGenericasDAO<Integer, Endereco> {
                 enderecos.add(objeto);
             }
 
-            if (enderecos == null)
-                throw new RuntimeException("Não existem endereços cadastrados");
+            if (enderecos != null)
+                return enderecos;
 
-            return enderecos;
+            throw new RuntimeException("Não existem endereços cadastrados");
 
         } catch (SQLException e) {
             throw new RuntimeException((e.getMessage()));
@@ -92,8 +92,40 @@ public class EnderecoDAO implements IOperacoesGenericasDAO<Integer, Endereco> {
         }
     }
 
+    public Endereco BuscaPorId(Integer id) {
+        Statement statement = null;
+
+        try {
+
+            statement = _connection.prepareStatement(
+              "SELECT * FROM `Endereco` WHERE Id = ?;"
+            );
+
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                Endereco objeto = new Endereco(
+                        resultSet.getInt("Id"),
+                        resultSet.getString("CEP"),
+                        resultSet.getString("Bairro"),
+                        resultSet.getString("Estado"),
+                        resultSet.getString("Cidade"),
+                        resultSet.getString("Logradouro"));
+
+                return objeto;
+            }
+
+            throw new RuntimeException("Não foi encontrado endereço correspondente.");
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        } finally {
+            ConexaoDb.closeStatement(statement);
+        }
+    }
+
     @Override
-    public Endereco Atualizar(Integer integer, Endereco objeto) {
+    public Endereco Atualizar(Integer id, Endereco objeto) {
         PreparedStatement statement = null;
 
         try {
@@ -108,7 +140,7 @@ public class EnderecoDAO implements IOperacoesGenericasDAO<Integer, Endereco> {
             statement.setString(3, objeto.getEstado());
             statement.setString(4, objeto.getCidade());
             statement.setString(5, objeto.getLogradouro());
-            statement.setInt(6, integer);
+            statement.setInt(6, id);
 
             int rowsAffected = statement.executeUpdate();
 
@@ -125,14 +157,14 @@ public class EnderecoDAO implements IOperacoesGenericasDAO<Integer, Endereco> {
             return objeto;
 
         } catch (SQLException e) {
-            throw new RuntimeException((e.getMessage()));
+            throw new RuntimeException(e.getMessage());
         } finally {
             ConexaoDb.closeStatement(statement);
         }
     }
 
     @Override
-    public void Excluir(Integer integer) {
+    public void Excluir(Integer id) {
         PreparedStatement statement = null;
 
         try {
@@ -141,7 +173,7 @@ public class EnderecoDAO implements IOperacoesGenericasDAO<Integer, Endereco> {
                     "DELETE FROM `Endereco` WHERE Id = ?;"
             );
 
-            statement.setInt(1, integer);
+            statement.setInt(1, id);
 
             statement.executeUpdate();
 
