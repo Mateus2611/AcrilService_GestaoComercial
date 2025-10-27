@@ -15,7 +15,6 @@ public class OrcamentoDAO {
         _connection = connection;
     }
 
-
     public Orcamento Criar(Orcamento objeto) {
         PreparedStatement statement = null;
 
@@ -52,6 +51,30 @@ public class OrcamentoDAO {
             ConexaoDb.closeStatement(statement);
         }
         return objeto;
+    }
+
+    public boolean AtualizarStatus(Integer id, Orcamento objeto) {
+        PreparedStatement statement = null;
+
+        try {
+            statement = _connection.prepareStatement(
+                    "UPDATE `Orcamento` " +
+                            "SET `Status_Orcamento` = ? " +
+                            "WHERE `Id` = ?;"
+            );
+
+            statement.setString(1, objeto.getStatus().name());
+            statement.setInt(2, id);
+
+            int rowsAffected = statement.executeUpdate();
+
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        } finally {
+            ConexaoDb.closeStatement(statement);
+        }
     }
 
     public List<Orcamento> BuscaGeral() {
@@ -93,6 +116,54 @@ public class OrcamentoDAO {
             ConexaoDb.closeResultSet(resultSet);
 
             return orcamentos;
+
+        } catch (SQLException e) {
+            throw new RuntimeException((e.getMessage()));
+        } finally {
+            ConexaoDb.closeStatement(statement);
+        }
+    }
+
+    public Orcamento BuscaId(Integer id) {
+
+        PreparedStatement statement = null;
+
+        try {
+            statement = _connection.prepareStatement(
+                    "SELECT * FROM `Orcamento` " +
+                            "WHERE Id = ?;"
+            );
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+
+            Orcamento objeto = null;
+
+            if (resultSet.next()) {
+
+                String orcamentoSatusString = resultSet.getString("Status_Orcamento");
+                Orcamento.StatusOrcamento status = null;
+
+                if (orcamentoSatusString != null) {
+                    try {
+                        status = Orcamento.StatusOrcamento.valueOf(orcamentoSatusString.toUpperCase());
+                    } catch (IllegalArgumentException e) {
+                        System.err.println("Status inválido: " + orcamentoSatusString);
+                    }
+                }
+
+                objeto = new Orcamento(
+                        resultSet.getInt("Id_Cliente"),
+                        resultSet.getDate("Data_Criacao"),
+                        resultSet.getDate("Data_Validade"),
+                        resultSet.getBigDecimal("Valor"),
+                        status,
+                        resultSet.getBigDecimal("Desconto"));
+
+                objeto.setId(resultSet.getInt("Id"));
+            }
+
+            ConexaoDb.closeResultSet(resultSet);
+            return objeto;
 
         } catch (SQLException e) {
             throw new RuntimeException((e.getMessage()));
