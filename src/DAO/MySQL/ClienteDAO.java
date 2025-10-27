@@ -4,6 +4,7 @@ import DAO.Interfaces.IOperacoesGenericasDAO;
 import DAO.JDBC.ConexaoDb;
 import Model.Cliente;
 import Model.Endereco;
+import Model.Orcamento;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -57,10 +58,9 @@ public class ClienteDAO {
         }
     }
 
-    /*
-    public List<Endereco> BuscaGeral() {
+    public List<Cliente> BuscaGeral() {
         PreparedStatement statement = null;
-        List<Endereco> enderecos = null;
+        List<Cliente> clientes = null;
 
         try {
 
@@ -71,19 +71,38 @@ public class ClienteDAO {
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
-                Cliente objeto = new Endereco(
-                        resultSet.getInt("Id"),
-                        resultSet.getInt("Id_Endereco"),
-                        resultSet.getString("Bairro"),
-                        resultSet.getString("Estado"),
-                        resultSet.getString("Cidade"),
-                        resultSet.getString("Logradouro"));
 
-                enderecos.add(objeto);
+                String clienteTipo = resultSet.getString("Tipo");
+                Cliente.TipoCliente tipo= null;
+
+                String statusCliente = resultSet.getString("Status_Cliente");
+                Cliente.StatusCliente status = null;
+
+                if ((clienteTipo != null) && (statusCliente != null)) {
+                    try {
+
+                        tipo = Cliente.TipoCliente.valueOf(clienteTipo.toUpperCase());
+                        status = Cliente.StatusCliente.valueOf(statusCliente.toUpperCase());
+
+                    } catch (IllegalArgumentException e) {
+                        throw new IllegalArgumentException(e.getMessage());
+                    }
+                }
+
+                Cliente objeto = new Cliente(
+                        resultSet.getInt("Id"),
+                        resultSet.getString("Nome"),
+                        resultSet.getInt("Id_Endereco"),
+                        resultSet.getDate("Data_Cadastro"),
+                        resultSet.getDate("Data_Inativacao"),
+                        tipo,
+                        status);
+
+                clientes.add(objeto);
             }
 
-            if (enderecos != null)
-                return enderecos;
+            if (clientes != null)
+                return clientes;
 
             throw new RuntimeException("Não existem endereços cadastrados");
 
@@ -94,30 +113,47 @@ public class ClienteDAO {
         }
     }
 
-    public Endereco BuscaPorId(Integer id) {
+    public Cliente BuscaPorId(Integer id) {
         PreparedStatement statement = null;
 
         try {
 
             statement = _connection.prepareStatement(
-                    "SELECT * FROM `Endereco` WHERE Id = ?;"
+                    "SELECT * FROM `Cliente` WHERE Id = ?;"
             );
 
             ResultSet resultSet = statement.executeQuery();
 
-            if (resultSet.next()) {
-                Endereco objeto = new Endereco(
-                        resultSet.getInt("Id"),
-                        resultSet.getString("CEP"),
-                        resultSet.getString("Bairro"),
-                        resultSet.getString("Estado"),
-                        resultSet.getString("Cidade"),
-                        resultSet.getString("Logradouro"));
+            if (!resultSet.next())
+                throw new RuntimeException("Cliente não encontrado.");
 
-                return objeto;
+            String clienteTipo = resultSet.getString("Tipo");
+            Cliente.TipoCliente tipo= null;
+
+            String statusCliente = resultSet.getString("Status_Cliente");
+            Cliente.StatusCliente status = null;
+
+            if ((clienteTipo != null) && (statusCliente != null)) {
+                try {
+
+                    tipo = Cliente.TipoCliente.valueOf(clienteTipo.toUpperCase());
+                    status = Cliente.StatusCliente.valueOf(statusCliente.toUpperCase());
+
+                } catch (IllegalArgumentException e) {
+                    throw new IllegalArgumentException(e.getMessage());
+                }
             }
 
-            throw new RuntimeException("Não foi encontrado endereço correspondente.");
+            Cliente objeto = new Cliente(
+                    resultSet.getInt("Id"),
+                    resultSet.getString("Nome"),
+                    resultSet.getInt("Id_Endereco"),
+                    resultSet.getDate("Data_Cadastro"),
+                    resultSet.getDate("Data_Inativacao"),
+                    tipo,
+                    status);
+
+            return objeto;
 
         } catch (SQLException e) {
             throw new RuntimeException(e.getMessage());
@@ -126,28 +162,29 @@ public class ClienteDAO {
         }
     }
 
-    @Override
-    public Endereco Atualizar(Integer id, Endereco objeto) {
+    public Cliente Atualizar(Integer id, Cliente objeto) {
         PreparedStatement statement = null;
 
         try {
 
             statement = _connection.prepareStatement(
-                    "UPDATE `Endereco` SET `CEP` = ?, `Bairro` = ?, `Estado` = ?, `Cidade` = ?, `Logradouro` = ? WHERE `endereco`.`Id` = ?;",
+                    "UPDATE `Cliente` SET `Id_Endereco` = ?, `Nome` = ?, `Tipo` = ?, `Data_Cadastro` = ?, `Status_Cliente` = ?, `Data_Inativacao` = ? WHERE `cliente`.`Id` = ?;",
                     Statement.RETURN_GENERATED_KEYS
             );
 
-            statement.setString(1, objeto.getCep());
-            statement.setString(2, objeto.getBairro());
-            statement.setString(3, objeto.getEstado());
-            statement.setString(4, objeto.getCidade());
-            statement.setString(5, objeto.getLogradouro());
-            statement.setInt(6, id);
+            statement.setInt(1, objeto.getIdEndereco());
+            statement.setString(2, objeto.getNome());
+            statement.setString(3, objeto.getTipo().name());
+            statement.setDate(4, objeto.getDataCadastro());
+            statement.setString(5, objeto.getStatus().name());
+            statement.setDate(6, objeto.getDataInativacao());
+            statement.setInt(7, id);
+
 
             int rowsAffected = statement.executeUpdate();
 
             if (rowsAffected <= 0)
-                throw new RuntimeException("Erro ao atualizar endereço");
+                throw new RuntimeException("Erro ao atualizar cliente.");
 
             ResultSet resultSet = statement.getGeneratedKeys();
 
@@ -164,5 +201,117 @@ public class ClienteDAO {
             ConexaoDb.closeStatement(statement);
         }
     }
-     */
+
+    public Cliente InativarCliente(Integer id) {
+        PreparedStatement statement = null;
+        LocalDate localDate = LocalDate.now();
+        Date currentDate = (Date) Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        try {
+            statement = _connection.prepareStatement(
+                    "UPDATE `Cliente` SET `Status_Cliente` = 'INATIVO', `Data_Inativacao` = ? WHERE `Cliente`.`Id` = ?;",
+                    Statement.RETURN_GENERATED_KEYS
+            );
+
+            statement.setDate(1, currentDate);
+            statement.setInt(2, id);
+
+            int rowsAffectes = statement.executeUpdate();
+
+            if (rowsAffectes <= 0)
+                throw new RuntimeException("Erro ao inativar cliente.");
+
+            ResultSet resultSet = statement.getGeneratedKeys();
+
+            String clienteTipo = resultSet.getString("Tipo");
+            Cliente.TipoCliente tipo= null;
+
+            String statusCliente = resultSet.getString("Status_Cliente");
+            Cliente.StatusCliente status = null;
+
+            if ((clienteTipo != null) && (statusCliente != null)) {
+                try {
+
+                    tipo = Cliente.TipoCliente.valueOf(clienteTipo.toUpperCase());
+                    status = Cliente.StatusCliente.valueOf(statusCliente.toUpperCase());
+
+                } catch (IllegalArgumentException e) {
+                    throw new IllegalArgumentException(e.getMessage());
+                }
+            }
+
+            Cliente objeto = new Cliente(resultSet.getInt("Id"),
+                                        resultSet.getString("Nome"),
+                                        resultSet.getInt("Id_Endereco"),
+                                        resultSet.getDate("Data_Cadastro"),
+                                        resultSet.getDate("Data_Inativação"),
+                                        tipo,
+                                        status);
+
+
+            ConexaoDb.closeResultSet(resultSet);
+
+            return objeto;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        } finally {
+            ConexaoDb.closeStatement(statement);
+        }
+    }
+
+    public Cliente AtivarCliente(Integer id) {
+        PreparedStatement statement = null;
+
+        try {
+            statement = _connection.prepareStatement(
+                    "UPDATE `Cliente` SET `Status_Cliente` = 'ATIVO' WHERE `Cliente`.`Id` = ?;",
+                    Statement.RETURN_GENERATED_KEYS
+            );
+
+            statement.setInt(1, id);
+
+            int rowsAffectes = statement.executeUpdate();
+
+            if (rowsAffectes <= 0)
+                throw new RuntimeException("Erro ao ativar cliente.");
+
+            ResultSet resultSet = statement.getGeneratedKeys();
+
+            String clienteTipo = resultSet.getString("Tipo");
+            Cliente.TipoCliente tipo= null;
+
+            String statusCliente = resultSet.getString("Status_Cliente");
+            Cliente.StatusCliente status = null;
+
+            if ((clienteTipo != null) && (statusCliente != null)) {
+                try {
+
+                    tipo = Cliente.TipoCliente.valueOf(clienteTipo.toUpperCase());
+                    status = Cliente.StatusCliente.valueOf(statusCliente.toUpperCase());
+
+                } catch (IllegalArgumentException e) {
+                    throw new IllegalArgumentException(e.getMessage());
+                }
+            }
+
+            Cliente objeto = new Cliente(resultSet.getInt("Id"),
+                    resultSet.getString("Nome"),
+                    resultSet.getInt("Id_Endereco"),
+                    resultSet.getDate("Data_Cadastro"),
+                    resultSet.getDate("Data_Inativação"),
+                    tipo,
+                    status);
+
+
+            ConexaoDb.closeResultSet(resultSet);
+
+            return objeto;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        } finally {
+            ConexaoDb.closeStatement(statement);
+        }
+    }
 }
