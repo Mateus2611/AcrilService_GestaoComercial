@@ -55,7 +55,6 @@ public class EnderecoDAO implements IOperacoesGenericasDAO<Integer, Endereco> {
         }
     }
 
-    @Override
     public List<Endereco> BuscaGeral() {
        PreparedStatement statement = null;
        List<Endereco> enderecos = null;
@@ -100,6 +99,8 @@ public class EnderecoDAO implements IOperacoesGenericasDAO<Integer, Endereco> {
             statement = _connection.prepareStatement(
               "SELECT * FROM `Endereco` WHERE Id = ?;"
             );
+
+            statement.setInt(1, id);
 
             ResultSet resultSet = statement.executeQuery();
 

@@ -50,7 +50,6 @@ public class ProdutoDAO implements IOperacoesGenericasDAO<Integer, Produto> {
         return objeto;
     }
 
-    @Override
     public List<Produto> BuscaGeral() {
         PreparedStatement statement = null;
         List<Produto> produtos = new ArrayList<>();
