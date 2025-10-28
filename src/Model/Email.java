@@ -5,18 +5,30 @@ public class Email {
     public Email() {
     }
 
-    public Email(Integer id, String endereco, Model.Cliente cliente) {
+    public Email(Integer id, Integer idCliente, String endereco) {
         Id = id;
+        IdCliente = idCliente;
         Endereco = endereco;
-        Cliente = cliente;
     }
 
     private Integer Id;
+    public Integer IdCliente;
     public String Endereco;
-    public Cliente Cliente;
 
     public Integer getId() {
         return Id;
+    }
+
+    public void setId(Integer id) {
+        Id = id;
+    }
+
+    public Integer getIdCliente() {
+        return IdCliente;
+    }
+
+    public void setIdCliente(Integer idCliente) {
+        IdCliente = idCliente;
     }
 
     public String getEndereco() {
