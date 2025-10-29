@@ -7,46 +7,45 @@ public class Venda {
     public Venda() {
     }
 
-    public Venda(Integer id, Model.Orcamento orcamento, Date dataCriacao,
-                 Date prazoPagamento, Date dataConclusao, Venda.StatusPagamento statusPagamento) {
-        this.id = id;
-        Orcamento = orcamento;
+    public Venda(Integer idOrcamento, Date dataCriacao, Date prazoPagamento, Date dataConclusao, StatusPagamento statusPagamento) {
+        IdOrcamento = idOrcamento;
         DataCriacao = dataCriacao;
         PrazoPagamento = prazoPagamento;
         DataConclusao = dataConclusao;
         StatusPagamento = statusPagamento;
     }
 
-    public Venda(Model.Orcamento orcamento, Date dataCriacao,
-                 Date prazoPagamento, Date dataConclusao, Venda.StatusPagamento statusPagamento) {
-        Orcamento = orcamento;
+    public Venda(Integer id, Integer idOrcamento, Date dataCriacao, Date prazoPagamento, Date dataConclusao, StatusPagamento statusPagamento) {
+        Id = id;
+        IdOrcamento = idOrcamento;
         DataCriacao = dataCriacao;
         PrazoPagamento = prazoPagamento;
         DataConclusao = dataConclusao;
         StatusPagamento = statusPagamento;
     }
 
-    private Integer id;
-    public Orcamento Orcamento;
-    public Date DataCriacao;
-    public Date PrazoPagamento;
-    public Date DataConclusao;
-    public StatusPagamento StatusPagamento;
+
+    private Integer Id;
+    private Integer IdOrcamento;
+    private Date DataCriacao;
+    private Date PrazoPagamento;
+    private Date DataConclusao;
+    private StatusPagamento StatusPagamento;
 
     public Integer getId() {
-        return id;
+        return Id;
     }
 
     public void setId(Integer id) {
-        this.id = id;
+        Id = id;
     }
 
-    public Model.Orcamento getOrcamento() {
-        return Orcamento;
+    public Integer getIdOrcamento() {
+        return IdOrcamento;
     }
 
-    public void setOrcamento(Model.Orcamento orcamento) {
-        Orcamento = orcamento;
+    public void setIdOrcamento(Integer idOrcamento) {
+        IdOrcamento = idOrcamento;
     }
 
     public Date getDataCriacao() {
@@ -73,15 +72,15 @@ public class Venda {
         DataConclusao = dataConclusao;
     }
 
-    public Venda.StatusPagamento getStatusPagamento() {
+    public StatusPagamento getStatusPagamento() {
         return StatusPagamento;
     }
 
-    public void setStatusPagamento(Venda.StatusPagamento statusPagamento) {
+    public void setStatusPagamento(StatusPagamento statusPagamento) {
         StatusPagamento = statusPagamento;
     }
 
-    enum StatusPagamento {
+    public static enum StatusPagamento {
         APROVADO,
         REJEITADO,
         PENDENTE
