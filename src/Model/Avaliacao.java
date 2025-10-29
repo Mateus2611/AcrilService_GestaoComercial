@@ -7,7 +7,7 @@ public class Avaliacao {
     public Avaliacao() {
     }
 
-    public Avaliacao(Integer id, Venda idVenda, Float nota,
+    public Avaliacao(Integer id, Integer idVenda, Float nota,
                      Date dataCriacao, String descricao, String titulo) {
         Id = id;
         IdVenda = idVenda;
@@ -18,7 +18,7 @@ public class Avaliacao {
     }
 
     public Avaliacao(String titulo, String descricao,
-                     Date dataCriacao, Float nota, Venda idVenda) {
+                     Date dataCriacao, Float nota, Integer idVenda) {
         Titulo = titulo;
         Descricao = descricao;
         DataCriacao = dataCriacao;
@@ -27,11 +27,11 @@ public class Avaliacao {
     }
 
     private Integer Id;
+    private Integer IdVenda;
     public String Titulo;
     public String Descricao;
     public Date DataCriacao;
     public Float Nota;
-    private Venda IdVenda;
 
     public Integer getId() {
         return Id;
@@ -73,11 +73,11 @@ public class Avaliacao {
         Nota = nota;
     }
 
-    public Venda getIdVenda() {
+    public Integer getIdVenda() {
         return IdVenda;
     }
 
-    public void setIdVenda(Venda idVenda) {
+    public void setIdVenda(Integer idVenda) {
         IdVenda = idVenda;
     }
 }
