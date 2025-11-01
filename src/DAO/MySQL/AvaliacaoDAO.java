@@ -1,10 +1,5 @@
 package DAO.MySQL;
 
-//*Aqui está o código AvaliacaoDAO com o novo método implementado.
-
-//Eu o nomeei buscaPorIdVenda para manter o padrão de nomenclatura (como BuscaId) e a lógica Java (camelCase).
-//Também corrigi um pequeno bug no seu método  BuscaGeral que causaria um NullPointerException
-
 import DAO.Interfaces.IOperacoesGenericasDAO;
 import DAO.JDBC.ConexaoDb;
 import Model.Avaliacao;
@@ -12,7 +7,7 @@ import Model.Venda;
 
 import java.sql.*;
 import java.time.LocalDate;
-import java.time.ZoneId; // Import não mais necessário após correção
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,10 +23,7 @@ public class AvaliacaoDAO implements IOperacoesGenericasDAO<Integer, Avaliacao> 
     public Avaliacao Criar(Avaliacao objeto) {
         PreparedStatement statement = null;
 
-        // CORREÇÃO: O PreparedStatement.setDate() espera um java.sql.Date.
-        // Esta é a forma correta de obtê-lo a partir do LocalDate.
         java.sql.Date currentDate = java.sql.Date.valueOf(LocalDate.now());
-
 
         try {
             statement = _connection.prepareStatement(
@@ -75,7 +67,6 @@ public class AvaliacaoDAO implements IOperacoesGenericasDAO<Integer, Avaliacao> 
                     "UPDATE `Avaliacao` " +
                             "SET `Id_Venda` = ?, `Titulo` = ?, `descricao` = ?, `Nota` = ? " +
                             "WHERE `Id_avaliacao` = ?;"
-                    // Removido RETURN_GENERATED_KEYS, desnecessário para update.
             );
 
             statement.setInt(1, objeto.getIdVenda());
@@ -89,8 +80,6 @@ public class AvaliacaoDAO implements IOperacoesGenericasDAO<Integer, Avaliacao> 
             if (rowsAffected <= 0)
                 throw new RuntimeException("Erro ao atualizar avaliação.");
 
-            // Removido bloco de getGeneratedKeys, o ID não muda no update.
-
             return objeto;
 
         } catch (SQLException e) {
@@ -102,9 +91,6 @@ public class AvaliacaoDAO implements IOperacoesGenericasDAO<Integer, Avaliacao> 
 
     public List<Avaliacao> BuscaGeral() {
         PreparedStatement statement = null;
-
-        // CORREÇÃO: A lista precisa ser inicializada, senão você terá um NullPointerException
-        // na linha avaliacoes.add(objeto).
         List<Avaliacao> avaliacoes = new ArrayList<>();
 
         try {
@@ -184,39 +170,23 @@ public class AvaliacaoDAO implements IOperacoesGenericasDAO<Integer, Avaliacao> 
             ConexaoDb.closeStatement(statement);
         }
     }
-
-    // ==========================================================
-    // == NOVO MÉTODO (consultar_avaliacao_venda) INICIA AQUI ==
-    // ==========================================================
-
-    /**
-     * Busca uma avaliação específica com base no ID da Venda associada.
-     * Este método assume que uma Venda só pode ter uma Avaliação (relação 1 para 1).
-     *
-     * @param idVenda O ID da Venda (Id_Venda) para filtrar a busca.
-     * @return O objeto Avaliacao encontrado, ou null se nenhuma avaliação
-     * corresponder àquele ID de Venda.
-     */
+    
     public Avaliacao buscaPorIdVenda(Integer idVenda) {
         PreparedStatement statement = null;
 
         try {
-            // A query SQL filtra pela coluna `Id_Venda`
             statement = _connection.prepareStatement(
                     "SELECT * FROM `Avaliacao` " +
                             "WHERE `Id_Venda` = ?;"
             );
 
-            // Define o parâmetro da query (o '?' na string SQL) com o ID recebido
             statement.setInt(1, idVenda);
 
             ResultSet resultSet = statement.executeQuery();
 
             Avaliacao objeto = null;
 
-            // Usamos if (resultSet.next()) porque esperamos apenas UM resultado
             if (resultSet.next()) {
-                // Lê os dados do resultado do banco
                 int idVendaResultado = resultSet.getInt("Id_Venda");
                 int idAvaliacao = resultSet.getInt("Id_avaliacao");
                 String titulo = resultSet.getString("Titulo");
@@ -224,7 +194,6 @@ public class AvaliacaoDAO implements IOperacoesGenericasDAO<Integer, Avaliacao> 
                 java.util.Date dataCriacao = resultSet.getDate("Data_Criação");
                 float nota = resultSet.getFloat("Nota");
 
-                // Cria o objeto Avaliacao com os dados
                 objeto = new Avaliacao(
                         idAvaliacao,
                         idVendaResultado,
@@ -236,7 +205,7 @@ public class AvaliacaoDAO implements IOperacoesGenericasDAO<Integer, Avaliacao> 
             }
 
             ConexaoDb.closeResultSet(resultSet);
-            return objeto; // Retorna a avaliação encontrada (ou null se não achou)
+            return objeto;
 
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao buscar avaliação por ID da Venda: " + e.getMessage(), e);
@@ -244,11 +213,6 @@ public class AvaliacaoDAO implements IOperacoesGenericasDAO<Integer, Avaliacao> 
             ConexaoDb.closeStatement(statement);
         }
     }
-
-    // ========================================================
-    // == NOVO MÉTODO (consultar_avaliacao_venda) TERMINA AQUI ==
-    // ========================================================
-
 
     @Override
     public void Excluir(Integer id) {
