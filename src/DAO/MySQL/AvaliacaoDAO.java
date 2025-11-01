@@ -22,9 +22,8 @@ public class AvaliacaoDAO implements IOperacoesGenericasDAO<Integer, Avaliacao> 
     @Override
     public Avaliacao Criar(Avaliacao objeto) {
         PreparedStatement statement = null;
-        LocalDate localDate = LocalDate.now();
-        Date currentDate = (Date) Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());;
 
+        java.sql.Date currentDate = java.sql.Date.valueOf(LocalDate.now());
 
         try {
             statement = _connection.prepareStatement(
@@ -67,8 +66,7 @@ public class AvaliacaoDAO implements IOperacoesGenericasDAO<Integer, Avaliacao> 
             statement = _connection.prepareStatement(
                     "UPDATE `Avaliacao` " +
                             "SET `Id_Venda` = ?, `Titulo` = ?, `descricao` = ?, `Nota` = ? " +
-                            "WHERE `Id_avaliacao` = ?;",
-                    Statement.RETURN_GENERATED_KEYS
+                            "WHERE `Id_avaliacao` = ?;"
             );
 
             statement.setInt(1, objeto.getIdVenda());
@@ -82,13 +80,6 @@ public class AvaliacaoDAO implements IOperacoesGenericasDAO<Integer, Avaliacao> 
             if (rowsAffected <= 0)
                 throw new RuntimeException("Erro ao atualizar avaliação.");
 
-            ResultSet resultSet = statement.getGeneratedKeys();
-
-            if (resultSet.next())
-                objeto.setId(resultSet.getInt(1));
-
-            ConexaoDb.closeResultSet(resultSet);
-
             return objeto;
 
         } catch (SQLException e) {
@@ -100,7 +91,7 @@ public class AvaliacaoDAO implements IOperacoesGenericasDAO<Integer, Avaliacao> 
 
     public List<Avaliacao> BuscaGeral() {
         PreparedStatement statement = null;
-        List<Avaliacao> avaliacoes = null;
+        List<Avaliacao> avaliacoes = new ArrayList<>();
 
         try {
             statement = _connection.prepareStatement(
@@ -175,6 +166,49 @@ public class AvaliacaoDAO implements IOperacoesGenericasDAO<Integer, Avaliacao> 
 
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao buscar avaliação por ID: " + e.getMessage(), e);
+        } finally {
+            ConexaoDb.closeStatement(statement);
+        }
+    }
+    
+    public Avaliacao buscaPorIdVenda(Integer idVenda) {
+        PreparedStatement statement = null;
+
+        try {
+            statement = _connection.prepareStatement(
+                    "SELECT * FROM `Avaliacao` " +
+                            "WHERE `Id_Venda` = ?;"
+            );
+
+            statement.setInt(1, idVenda);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            Avaliacao objeto = null;
+
+            if (resultSet.next()) {
+                int idVendaResultado = resultSet.getInt("Id_Venda");
+                int idAvaliacao = resultSet.getInt("Id_avaliacao");
+                String titulo = resultSet.getString("Titulo");
+                String descricao = resultSet.getString("descricao");
+                java.util.Date dataCriacao = resultSet.getDate("Data_Criação");
+                float nota = resultSet.getFloat("Nota");
+
+                objeto = new Avaliacao(
+                        idAvaliacao,
+                        idVendaResultado,
+                        nota,
+                        dataCriacao,
+                        descricao,
+                        titulo
+                );
+            }
+
+            ConexaoDb.closeResultSet(resultSet);
+            return objeto;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao buscar avaliação por ID da Venda: " + e.getMessage(), e);
         } finally {
             ConexaoDb.closeStatement(statement);
         }
