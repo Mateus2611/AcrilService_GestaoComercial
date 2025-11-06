@@ -3,6 +3,8 @@ package Service;
 import Model.Venda;
 import Service.Interface.IOperacoesGenericasService;
 
+import java.util.List;
+
 public class VendaService implements IOperacoesGenericasService<Venda, Integer> {
 
     @Override
@@ -11,7 +13,7 @@ public class VendaService implements IOperacoesGenericasService<Venda, Integer> 
     }
 
     @Override
-    public Venda BuscaGeral() {
+    public List<Venda> BuscaGeral() {
         return null;
     }
 
@@ -21,7 +23,5 @@ public class VendaService implements IOperacoesGenericasService<Venda, Integer> 
     }
 
     @Override
-    public Venda Excluir(Integer integer) {
-        return null;
-    }
+    public void Excluir(Integer integer) {}
 }

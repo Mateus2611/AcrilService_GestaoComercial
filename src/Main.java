@@ -19,6 +19,7 @@ public class Main {
     }
 
     enum Rotas {
-        Endereco
+        Endereco,
+        Sair
     }
 }

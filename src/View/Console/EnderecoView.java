@@ -6,15 +6,19 @@ import Model.Endereco;
 import Service.EnderecoService;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 enum Opcoes {
-    Criar
+    Criar,
+    BuscaGeral
 }
 
 public class EnderecoView {
 
     Scanner sc = new Scanner(System.in);
+    EnderecoDAO enderecoDAO = new EnderecoDAO(ConexaoDb.openConnection());
+    EnderecoService enderecoService = new EnderecoService(enderecoDAO);
 
     public void SelecionarAcaoEndereco() {
 
@@ -24,14 +28,14 @@ public class EnderecoView {
         String resp = sc.next();
 
         switch (Opcoes.valueOf(resp)) {
-            case Criar -> CriarEndereco();
+            case Criar:
+                CriarEndereco();
+            case BuscaGeral:
+                BuscaGeral();
         }
     }
 
     private void CriarEndereco() {
-
-        EnderecoDAO dao = new EnderecoDAO(ConexaoDb.openConnection());
-        EnderecoService endereco = new EnderecoService(dao);
 
         System.out.println("Informe o seu CEP: ");
         String Cep = sc.next();
@@ -55,9 +59,15 @@ public class EnderecoView {
         System.out.println(Logradouro);
 
         Endereco objeto = new Endereco(Cep, Bairro, Estado, Cidade, Logradouro);
-        objeto = endereco.Criar(objeto);
+        objeto = enderecoService.Criar(objeto);
 
         System.out.println(objeto.toString());
+    }
+
+    private void BuscaGeral() {
+        List<Endereco> enderecos = enderecoService.BuscaGeral();
+
+        enderecos.forEach(System.out::println);
     }
 
 }
