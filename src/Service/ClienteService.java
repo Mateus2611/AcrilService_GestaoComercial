@@ -3,6 +3,8 @@ package Service;
 import Model.Cliente;
 import Service.Interface.IOperacoesGenericasService;
 
+import java.util.List;
+
 public class ClienteService implements IOperacoesGenericasService<Cliente, Integer> {
 
 
@@ -12,7 +14,7 @@ public class ClienteService implements IOperacoesGenericasService<Cliente, Integ
     }
 
     @Override
-    public Cliente BuscaGeral() {
+    public List<Cliente> BuscaGeral() {
         return null;
     }
 
@@ -22,7 +24,5 @@ public class ClienteService implements IOperacoesGenericasService<Cliente, Integ
     }
 
     @Override
-    public Cliente Excluir(Integer integer) {
-        return null;
-    }
+    public void Excluir(Integer id) {    }
 }
