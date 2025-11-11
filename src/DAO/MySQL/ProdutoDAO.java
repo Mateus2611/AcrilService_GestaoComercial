@@ -2,6 +2,7 @@ package DAO.MySQL;
 
 import DAO.Interfaces.IOperacoesGenericasDAO;
 import DAO.JDBC.ConexaoDb;
+import Model.Endereco;
 import Model.Produto;
 
 import java.sql.*;
@@ -109,6 +110,37 @@ public class ProdutoDAO implements IOperacoesGenericasDAO<Integer, Produto> {
             ConexaoDb.closeStatement(statement);
         }
         return objeto;
+    }
+
+    public Produto BuscaPorId(Integer id) {
+        PreparedStatement statement = null;
+
+        try {
+
+            statement = _connection.prepareStatement(
+                    "SELECT * FROM `Produto` WHERE Id = ?;"
+            );
+
+            statement.setInt(1, id);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                Produto objeto = new Produto(
+                        resultSet.getInt("Id"),
+                        resultSet.getString("Nome"),
+                        resultSet.getBigDecimal("Valor"));
+
+                return objeto;
+            }
+
+            throw new RuntimeException("Não foi encontrado produto correspondente.");
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        } finally {
+            ConexaoDb.closeStatement(statement);
+        }
     }
 
     @Override

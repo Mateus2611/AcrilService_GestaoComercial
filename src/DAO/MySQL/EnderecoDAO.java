@@ -150,6 +150,5 @@ public class EnderecoDAO implements IOperacoesGenericasDAO<Integer, Endereco> {
         } finally {
             ConexaoDb.closeStatement(statement);
         }
-
     }
 }
