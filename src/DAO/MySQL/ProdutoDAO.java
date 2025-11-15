@@ -84,7 +84,7 @@ public class ProdutoDAO implements IOperacoesGenericasDAO<Integer, Produto> {
     }
 
     @Override
-    public Produto Atualizar(Integer id, Produto objeto) {
+    public Produto Atualizar(Integer integer, Produto objeto) {
         PreparedStatement statement = null;
 
         try {
@@ -96,12 +96,12 @@ public class ProdutoDAO implements IOperacoesGenericasDAO<Integer, Produto> {
 
             statement.setString(1, objeto.getNome());
             statement.setBigDecimal(2, objeto.getValor());
-            statement.setInt(3, id);
+            statement.setInt(3, integer);
 
             int rowsAffected = statement.executeUpdate();
 
             if (rowsAffected == 0)
-                throw new RuntimeException("Nenhum produto encontrado" + id);
+                throw new RuntimeException("Nenhum produto encontrado" + integer);
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -133,7 +133,7 @@ public class ProdutoDAO implements IOperacoesGenericasDAO<Integer, Produto> {
                 return objeto;
             }
 
-            throw new RuntimeException("Não foi encontrado endereço correspondente.");
+            throw new RuntimeException("Não foi encontrado produto correspondente.");
 
         } catch (SQLException e) {
             throw new RuntimeException(e.getMessage());
@@ -143,7 +143,7 @@ public class ProdutoDAO implements IOperacoesGenericasDAO<Integer, Produto> {
     }
 
     @Override
-    public void Excluir(Integer id) {
+    public void Excluir(Integer integer) {
         PreparedStatement statement = null;
 
         try {
@@ -152,7 +152,7 @@ public class ProdutoDAO implements IOperacoesGenericasDAO<Integer, Produto> {
                             " WHERE `Id` = ?"
             );
 
-            statement.setInt(1, id);
+            statement.setInt(1, integer);
 
             statement.executeUpdate();
 
