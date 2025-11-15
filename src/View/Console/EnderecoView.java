@@ -69,5 +69,4 @@ public class EnderecoView {
 
         enderecos.forEach(System.out::println);
     }
-
 }

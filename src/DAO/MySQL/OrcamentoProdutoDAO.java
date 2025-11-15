@@ -15,7 +15,7 @@ public class OrcamentoProdutoDAO {
         _connection = connection;
     }
 
-    public void AdicionarProduto(OrcamentoProduto objeto) {
+    public OrcamentoProduto AdicionarProduto(OrcamentoProduto objeto) {
         PreparedStatement statement = null;
 
         try {
@@ -39,9 +39,10 @@ public class OrcamentoProdutoDAO {
         } finally {
             ConexaoDb.closeStatement(statement);
         }
+        return objeto;
     }
 
-    public void AtualizarQuantidade(OrcamentoProduto objeto) {
+    public OrcamentoProduto AtualizarQuantidade(OrcamentoProduto objeto) {
         PreparedStatement statement = null;
 
         try {
@@ -64,6 +65,7 @@ public class OrcamentoProdutoDAO {
         } finally {
             ConexaoDb.closeStatement(statement);
         }
+        return objeto;
     }
 
     public void RemoverItem(OrcamentoProduto objeto) {
