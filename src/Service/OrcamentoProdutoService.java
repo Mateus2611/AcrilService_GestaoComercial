@@ -2,9 +2,7 @@ package Service;
 
 import DAO.MySQL.OrcamentoProdutoDAO;
 import Model.OrcamentoProduto;
-import Service.Interface.IOperacoesGenericasService;
 
-import java.util.List;
 
 public class OrcamentoProdutoService {
 
@@ -35,6 +33,7 @@ public class OrcamentoProdutoService {
             throw new RuntimeException(e.getMessage());
         }
     }
+
 
     public void Excluir(Integer id, OrcamentoProduto objeto) {
         try {

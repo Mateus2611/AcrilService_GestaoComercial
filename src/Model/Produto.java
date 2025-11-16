@@ -45,4 +45,12 @@ public class Produto {
     public void setValor(BigDecimal valor) {
         Valor = valor;
     }
+
+    @Override
+    public String toString() {
+        return "Produto: " +
+                "Id = " + Id +
+                " | Nome = " + Nome +
+                " | Valor = R$" + Valor;
+    }
 }

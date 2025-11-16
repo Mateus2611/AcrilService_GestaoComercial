@@ -2,7 +2,6 @@ package DAO.MySQL;
 
 import DAO.Interfaces.IOperacoesGenericasDAO;
 import DAO.JDBC.ConexaoDb;
-import Model.Endereco;
 import Model.Produto;
 
 import java.sql.*;

@@ -2,11 +2,10 @@ package Service;
 
 import DAO.MySQL.ProdutoDAO;
 import Model.Produto;
-import Service.Interface.IOperacoesGenericasService;
 
 import java.util.List;
 
-public class ProdutoService implements IOperacoesGenericasService<Produto, Integer> {
+public class ProdutoService {
 
     private final ProdutoDAO _produtoDAO;
 
@@ -14,7 +13,6 @@ public class ProdutoService implements IOperacoesGenericasService<Produto, Integ
         _produtoDAO = produtoDAO;
     }
 
-    @Override
     public Produto Criar(Produto objeto) {
         if (objeto == null)
             throw new RuntimeException("Objeto vazio. Preencha as informações");
@@ -26,7 +24,6 @@ public class ProdutoService implements IOperacoesGenericasService<Produto, Integ
         }
     }
 
-    @Override
     public List<Produto> BuscaGeral() {
         try {
             return _produtoDAO.BuscaGeral();
@@ -35,7 +32,14 @@ public class ProdutoService implements IOperacoesGenericasService<Produto, Integ
         }
     }
 
-    @Override
+    public Produto BuscaPorId(Integer id) {
+        try {
+            return _produtoDAO.BuscaPorId(id);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
     public Produto Atualizar(Integer id, Produto objeto) {
         if (objeto == null)
             throw new RuntimeException("Objeto vazio. Preencha as informações.");
@@ -47,7 +51,6 @@ public class ProdutoService implements IOperacoesGenericasService<Produto, Integ
         }
     }
 
-    @Override
     public void Excluir(Integer id) {
         try {
             _produtoDAO.BuscaPorId(id);

@@ -13,10 +13,11 @@ import java.util.Scanner;
 
 
 enum produtoOpcoes {
-    Criar,
-    BuscaGeral,
-    Atualizar,
-    Excluir
+    CRIAR,
+    BUSCAGERAL,
+    BUSCAID,
+    ATUALIZAR,
+    EXCLUIR
 }
 
 public class ProdutoView {
@@ -25,7 +26,6 @@ public class ProdutoView {
     ProdutoDAO produtoDAO = new ProdutoDAO(ConexaoDb.openConnection());
     ProdutoService produtoService = new ProdutoService(produtoDAO);
 
-
     public void SelecionarAcaoProduto() {
 
         System.out.println("\n\nSelecione a operação desejada\n\n");
@@ -33,43 +33,114 @@ public class ProdutoView {
         System.out.println();
         String resp = sc.nextLine();
 
-        switch (Opcoes.valueOf(resp.toLowerCase())) {
-            case Criar:
+        switch (produtoOpcoes.valueOf(resp.toUpperCase())) {
+            case CRIAR:
                 CriarProduto();
-            case BuscaGeral:
+                break;
+            case BUSCAGERAL:
                 BuscaGeral();
+                break;
+            case BUSCAID:
+                BuscaId();
+                break;
+            case ATUALIZAR:
+                Atualizar();
+                break;
+            case EXCLUIR:
+                Excluir();
+                break;
         }
     }
 
     private void CriarProduto() {
+        BigDecimal valor;
+        String nome;
 
-        System.out.println("Informe o nome do produto");
-        String nome = sc.nextLine();
-        System.out.println(nome);
+        while (true) {
+            System.out.println("Informe o nome do produto");
+            nome = sc.nextLine();
 
-        System.out.println("Informe o valor do produto");
-        BigDecimal valor = BigDecimal.valueOf(sc.nextDouble());
-        System.out.println(valor);
+            System.out.println("Informe o valor do produto");
 
-        Produto objeto = new Produto(nome, valor);
-        objeto = produtoService.Criar(objeto);
+            try {
+                valor = BigDecimal.valueOf(Double.parseDouble(sc.nextLine()));
+                break;
+
+            } catch (NumberFormatException e) {
+                System.out.println("Entrada inválida");
+            }
+        }
+
+        try {
+            Produto objeto = new Produto(nome, valor);
+            objeto = produtoService.Criar(objeto);
+
+            System.out.println("Produto criado com sucesso");
+        } catch (RuntimeException e) {
+            System.out.println("Erro ao Criar Produto");
+        }
     }
 
     private void BuscaGeral() {
         List<Produto> produtos = produtoService.BuscaGeral();
-        produtos.forEach(System.out::println);
+
+        if (produtos.isEmpty()) {
+            System.out.println("Nenhum produto encontrado");
+        } else {
+            produtos.forEach(System.out::println);
+        }
+    }
+
+    private void BuscaId() {
+        int id;
+
+        while (true) {
+            System.out.println("Informe o id do produto. Digite 'Sair' para encerrar");
+            String input = sc.nextLine();
+
+            if (input.equalsIgnoreCase("Sair")) {
+                break;
+            }
+
+            try {
+                id = Integer.parseInt(input);
+                Produto objeto = produtoService.BuscaPorId(id);
+                System.out.println(objeto);
+                break;
+
+            } catch (RuntimeException e) {
+                System.out.println("Nenhum Produto Encontrado");
+            }
+        }
     }
 
     private void Atualizar() {
         System.out.println("Informe o id do produto");
         int id = Integer.parseInt(sc.nextLine());
-        System.out.println(id);
 
-        System.out.println("Informe o novo nome do produto");
-        String nome = sc.nextLine();
-        System.out.println(nome);
+        Produto objeto = produtoService.BuscaPorId(id);
+        if (objeto == null) {
+            System.out.println("Produto não encontrado");
+        } else {
+            System.out.println("Produto atual: " + objeto.getNome() + " | " + objeto.getValor());
 
-        System.out.println("Informe o novo valor do produto");
-        BigDecimal valor = BigDecimal.valueOf(sc.nextDouble());
+            System.out.println("Informe o novo nome do produto");
+            String nome = sc.nextLine();
+
+            System.out.println("Informe o novo valor do produto");
+            BigDecimal valor = BigDecimal.valueOf(Double.parseDouble(sc.nextLine()));
+
+            objeto = new Produto(id, nome, valor);
+            objeto = produtoService.Atualizar(objeto.getId(), objeto);
+
+            System.out.println("Produto atualizado com sucesso");
+        }
+    }
+
+    private void Excluir() {
+        System.out.println("Informe o id do produto para exclusão");
+        int id = Integer.parseInt(sc.nextLine());
+        produtoService.Excluir(id);
+        System.out.println("Produto excluído com sucesso");
     }
 }
