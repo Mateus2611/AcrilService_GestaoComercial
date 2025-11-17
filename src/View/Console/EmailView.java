@@ -1,0 +1,31 @@
+package View.Console;
+
+import Model.Email;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class EmailView {
+    Scanner sc = new Scanner(System.in);
+
+    public List<Email> CriarEmail() {
+        Email email = new Email();
+        List<Email> listaEmails = new ArrayList<Email>();
+        String validation = "";
+
+        do {
+            System.out.println("Informe seu endereço email: ");
+            email.setEndereco(sc.nextLine());
+
+            listaEmails.add(email);
+
+            System.out.println("Deseja adicionar mais emails? (S/N)");
+            validation = sc.next().toUpperCase();
+            sc.nextLine();
+
+        } while (!validation.equals("N"));
+
+        return listaEmails;
+    }
+}

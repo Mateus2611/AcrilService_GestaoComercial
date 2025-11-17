@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 import java.util.Scanner;
 
@@ -74,7 +74,7 @@ public class OrcamentoView {
                 System.out.println("Informe a data de criação do orçamento");
                 SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
                 String dataString = sc.nextLine();
-                dataCriacao = format.parse(dataString);
+                dataCriacao = (Date) format.parse(dataString);
 
                 System.out.println("Informe a data de validade do orçamento");
                 SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
@@ -83,7 +83,7 @@ public class OrcamentoView {
                 if (dataString2.isEmpty()) {
                     dataValidade = null;
                 } else {
-                    dataValidade = format2.parse(dataString2);
+                    dataValidade = (Date) format2.parse(dataString2);
                 }
 
                 System.out.println(dataValidade);

@@ -5,6 +5,10 @@ public class Email {
     public Email() {
     }
 
+    public Email(String endereco) {
+        Endereco = endereco;
+    }
+
     public Email(Integer id, Integer idCliente, String endereco) {
         Id = id;
         IdCliente = idCliente;

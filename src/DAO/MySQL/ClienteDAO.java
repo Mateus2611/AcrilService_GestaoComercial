@@ -35,7 +35,7 @@ public class ClienteDAO {
             statement.setInt(1, idEndereco);
             statement.setString(2, objeto.getNome());
             statement.setString(3, objeto.getTipo().name());
-            statement.setDate(4, currentDate);
+            statement.setDate(4, (Date) currentDate);
 
             int rowsAffected = statement.executeUpdate();
 
