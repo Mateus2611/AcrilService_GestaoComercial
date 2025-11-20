@@ -7,6 +7,7 @@ import Model.Endereco;
 import Model.Orcamento;
 
 import java.sql.*;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
@@ -19,33 +20,34 @@ public class ClienteDAO {
         _connection = connection;
     }
 
-    public Cliente Criar(Cliente objeto, Integer idEndereco) {
+    public Cliente Criar(Cliente objeto) {
         PreparedStatement statement = null;
-        LocalDate localDate = LocalDate.now();
-        Date currentDate = (Date) Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());;
+        objeto.setDataCadastro(Date.valueOf(LocalDate.now()));
 
         try {
 
             statement = _connection.prepareStatement(
-                    "IINSERT INTO `Cliente` (`Id_Endereco`, `Nome`, `Tipo`, `Data_Cadastro`, `Status_Cliente`) " +
-                            "VALUES (?, ?, ?, ?, `ATIVO`);",
+                    "INSERT INTO `Cliente` (`Id_Endereco`, `Nome`, `Tipo`, `Data_Cadastro`, `Status_Cliente`) " +
+                            "VALUES (?, ?, ?, ?, 'ATIVO');",
                     Statement.RETURN_GENERATED_KEYS
             );
 
-            statement.setInt(1, idEndereco);
+            statement.setInt(1, objeto.getIdEndereco());
             statement.setString(2, objeto.getNome());
             statement.setString(3, objeto.getTipo().name());
-            statement.setDate(4, (Date) currentDate);
+            statement.setDate(4, objeto.getDataCadastro());
 
             int rowsAffected = statement.executeUpdate();
 
             if (rowsAffected <= 0)
-                throw new RuntimeException("Erro ao criar cliente.");
+                throw new RuntimeException("Erro ao atualizar endereço");
 
             ResultSet resultSet = statement.getGeneratedKeys();
 
             if (resultSet.next())
                 objeto.setId(resultSet.getInt(1));
+
+            objeto = BuscaPorId(objeto.getId());
 
             ConexaoDb.closeResultSet(resultSet);
 
@@ -121,6 +123,8 @@ public class ClienteDAO {
             statement = _connection.prepareStatement(
                     "SELECT * FROM `Cliente` WHERE Id = ?;"
             );
+
+            statement.setInt(1, id);
 
             ResultSet resultSet = statement.executeQuery();
 

@@ -42,4 +42,12 @@ public class Email {
     public void setEndereco(String endereco) {
         Endereco = endereco;
     }
+
+    @Override
+    public String toString() {
+        return "Email{\n" +
+                "\nId: " + Id +
+                ", \nEndereco: " + Endereco + '\'' +
+                "\n}";
+    }
 }

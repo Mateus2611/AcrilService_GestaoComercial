@@ -6,7 +6,6 @@ import DAO.MySQL.EnderecoDAO;
 import Model.Cliente;
 import Model.Email;
 import Model.Endereco;
-import Service.Interface.IOperacoesGenericasService;
 
 import java.util.List;
 
@@ -33,7 +32,9 @@ public class ClienteService {
 
         try {
             endereco = _enderecoDAO.Criar(endereco);
-            cliente = _clienteDAO.Criar(cliente, endereco.getId());
+            cliente.setIdEndereco(endereco.getId());
+            cliente = _clienteDAO.Criar(cliente);
+            cliente.setEndereco(endereco);
 
             for (Email email :  emails) {
                 email.setIdCliente(cliente.getId());

@@ -21,7 +21,7 @@ public class EmailDAO implements IOperacoesGenericasDAO<Integer, Email> {
 
         try {
             statement = _connection.prepareStatement(
-                    "INSERT INTO `email` (`Id_Cliente`, `Endereco`) " +
+                    "INSERT INTO `Email` (`Id_Cliente`, `Endereco`) " +
                             "VALUES ( ?, ?);",
                     Statement.RETURN_GENERATED_KEYS
             );

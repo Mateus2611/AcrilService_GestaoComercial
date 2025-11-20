@@ -1,6 +1,7 @@
 package Model;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Cliente {
@@ -40,7 +41,7 @@ public class Cliente {
 
     public Integer Id;
     public String Nome;
-    public List<Email> Emails;
+    public List<Email> Emails = new ArrayList<Email>();
     public Integer IdEndereco;
     public Endereco Endereco;
     public Date DataCadastro;
@@ -123,15 +124,15 @@ public class Cliente {
     @Override
     public String toString() {
         return "Cliente{" +
-                "Id=" + Id +
-                ", Nome='" + Nome + '\'' +
-                ", Emails=" + Emails +
-                ", IdEndereco=" + IdEndereco +
-                ", Endereco=" + Endereco +
-                ", DataCadastro=" + DataCadastro +
-                ", DataInativacao=" + DataInativacao +
-                ", Tipo=" + Tipo +
-                ", Status=" + Status +
+                "Id: " + Id +
+                ", \nNome: '" + Nome + '\'' +
+                ", \nEmails: \n" + Emails.toString() +
+                ", \nIdEndereco: " + IdEndereco +
+                ", \nEndereco: \n" + Endereco.toString() +
+                ", \nDataCadastro: " + DataCadastro +
+                ", \nDataInativacao: " + DataInativacao +
+                ", \nTipo: " + Tipo +
+                ", \nStatus: " + Status +
                 '}';
     }
 

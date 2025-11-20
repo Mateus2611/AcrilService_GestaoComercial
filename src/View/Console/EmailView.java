@@ -16,7 +16,8 @@ public class EmailView {
 
         do {
             System.out.println("Informe seu endereço email: ");
-            email.setEndereco(sc.nextLine());
+            String resp = sc.nextLine();
+            email.setEndereco(resp);
 
             listaEmails.add(email);
 
