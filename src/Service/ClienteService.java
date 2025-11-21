@@ -50,7 +50,13 @@ public class ClienteService {
 
     public List<Cliente> BuscaGeral() {
         try {
-            return _clienteDAO.BuscaGeral();
+            List<Cliente> clientes = _clienteDAO.BuscaGeral();
+
+            for (Cliente cliente : clientes) {
+                cliente.setEndereco(_enderecoDAO.BuscaPorId(cliente.getIdEndereco()));
+            }
+
+            return clientes;
         } catch (RuntimeException ex) {
             throw new RuntimeException(ex.getMessage());
         }
@@ -58,20 +64,51 @@ public class ClienteService {
 
     public Cliente BuscaPorId(Integer id) {
         try {
-            return _clienteDAO.BuscaPorId(id);
+            Cliente cliente = _clienteDAO.BuscaPorId(id);
+
+            cliente.setEndereco(_enderecoDAO.BuscaPorId(cliente.getIdEndereco()));
+
+            cliente.setEmails(_emailDAO.BuscaGeral(cliente.getId()));
+
+            return cliente;
         } catch (RuntimeException ex) {
             throw new RuntimeException(ex.getMessage());
         }
     }
 
-    public Cliente AtualizarCliente(Integer id, Cliente objeto) {
-        if (objeto == null)
-            throw new RuntimeException("Objeto vazio. Preencha as informações");
-
+    public Cliente AtualizarTipoCliente(Integer id, String tipoCliente) {
         try {
-            _clienteDAO.BuscaPorId(id);
 
-            return _clienteDAO.Atualizar(id, objeto);
+            _clienteDAO.AtualizarTipoCliente(id, tipoCliente);
+
+            return BuscaPorId(id);
+        } catch (RuntimeException ex) {
+            throw new RuntimeException(ex.getMessage());
+        }
+    }
+
+    public Cliente AtualizarNomeCliente(Integer id, String nome) {
+        try {
+
+            _clienteDAO.AtualizarNomeCliente(id, nome);
+
+            return BuscaPorId(id);
+        } catch (RuntimeException ex) {
+            throw new RuntimeException(ex.getMessage());
+        }
+    }
+
+    public Cliente AtualizarEnderecoCliente(Integer idCliente, Endereco endereco) {
+        try {
+            Cliente cliente = _clienteDAO.BuscaPorId(idCliente);
+            Integer idEnderecoDesatualizado = cliente.IdEndereco;
+
+            endereco = _enderecoDAO.Criar(endereco);
+            _clienteDAO.AtualizarEnderecoCliente(idCliente, endereco.getId());
+
+            _enderecoDAO.Excluir(idEnderecoDesatualizado);
+
+            return BuscaPorId(idCliente);
         } catch (RuntimeException ex) {
             throw new RuntimeException(ex.getMessage());
         }
@@ -79,9 +116,10 @@ public class ClienteService {
 
     public Cliente InativarCliente(int id) {
         try {
-            _clienteDAO.BuscaPorId(id);
 
-            return _clienteDAO.InativarCliente(id);
+            _clienteDAO.InativarCliente(id);
+
+            return BuscaPorId(id);
         } catch (RuntimeException ex) {
             throw new RuntimeException(ex.getMessage());
         }
@@ -89,9 +127,10 @@ public class ClienteService {
 
     public Cliente AtivarCliente(int id) {
         try {
-            _clienteDAO.BuscaPorId(id);
 
-            return _clienteDAO.AtivarCliente(id);
+            _clienteDAO.AtivarCliente(id);
+
+            return BuscaPorId(id);
         } catch (RuntimeException ex) {
             throw new RuntimeException(ex.getMessage());
         }

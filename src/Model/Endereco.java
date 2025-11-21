@@ -81,13 +81,13 @@ public class Endereco {
 
     @Override
     public String toString() {
-        return "Endereco{\n" +
+        return "\nEndereco{\n" +
                 "\nId: " + Id +
                 ", \nCep: " + Cep + '\'' +
                 ", \nBairro: " + Bairro + '\'' +
                 ", \nEstado: " + Estado + '\'' +
-                ", \nCidade= " + Cidade + '\'' +
-                ", \nLogradouro= " + Logradouro + '\'' +
+                ", \nCidade: " + Cidade + '\'' +
+                ", \nLogradouro: " + Logradouro + '\'' +
                 "\n}";
     }
 }

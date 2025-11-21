@@ -123,8 +123,8 @@ public class Cliente {
 
     @Override
     public String toString() {
-        return "Cliente{" +
-                "Id: " + Id +
+        return "\nCliente {" +
+                "\nId: " + Id +
                 ", \nNome: '" + Nome + '\'' +
                 ", \nEmails: \n" + Emails.toString() +
                 ", \nIdEndereco: " + IdEndereco +

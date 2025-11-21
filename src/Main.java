@@ -17,7 +17,7 @@ public class Main {
         String escolha = sc.nextLine().toUpperCase();
 
         switch (Rotas.valueOf(escolha)) {
-            case CLIENTE -> clienteView.CriarCliente();
+            case CLIENTE -> clienteView.SelecionarAcaoCliente();
             case PRODUTO -> produtoView.SelecionarAcaoProduto();
             case ORCAMENTO -> orcamentoView.SelecionarAcaoOrcamento();
             case ORCAMENTOPRODUTO -> orcamentoProdutoView.SelecionarAcaoOrcamentoProduto();

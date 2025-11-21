@@ -10,6 +10,7 @@ import java.sql.*;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ClienteDAO {
@@ -62,7 +63,7 @@ public class ClienteDAO {
 
     public List<Cliente> BuscaGeral() {
         PreparedStatement statement = null;
-        List<Cliente> clientes = null;
+        List<Cliente> clientes = new ArrayList<Cliente>();
 
         try {
 
@@ -166,23 +167,17 @@ public class ClienteDAO {
         }
     }
 
-    public Cliente Atualizar(Integer id, Cliente objeto) {
+    public void AtualizarTipoCliente(Integer id, String tipoCliente) {
         PreparedStatement statement = null;
 
         try {
 
             statement = _connection.prepareStatement(
-                    "UPDATE `Cliente` SET `Id_Endereco` = ?, `Nome` = ?, `Tipo` = ?, `Data_Cadastro` = ?, `Status_Cliente` = ?, `Data_Inativacao` = ? WHERE `cliente`.`Id` = ?;",
-                    Statement.RETURN_GENERATED_KEYS
+                    "UPDATE `Cliente` SET `Tipo` = ? WHERE `Id` = ?;"
             );
 
-            statement.setInt(1, objeto.getIdEndereco());
-            statement.setString(2, objeto.getNome());
-            statement.setString(3, objeto.getTipo().name());
-            statement.setDate(4, objeto.getDataCadastro());
-            statement.setString(5, objeto.getStatus().name());
-            statement.setDate(6, objeto.getDataInativacao());
-            statement.setInt(7, id);
+            statement.setString(1, tipoCliente);
+            statement.setInt(2, id);
 
 
             int rowsAffected = statement.executeUpdate();
@@ -190,14 +185,30 @@ public class ClienteDAO {
             if (rowsAffected <= 0)
                 throw new RuntimeException("Erro ao atualizar cliente.");
 
-            ResultSet resultSet = statement.getGeneratedKeys();
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        } finally {
+            ConexaoDb.closeStatement(statement);
+        }
+    }
 
-            if (resultSet.next())
-                objeto.setId(resultSet.getInt(1));
+    public void AtualizarNomeCliente(Integer id, String nome) {
+        PreparedStatement statement = null;
 
-            ConexaoDb.closeResultSet(resultSet);
+        try {
 
-            return objeto;
+            statement = _connection.prepareStatement(
+                    "UPDATE `Cliente` SET `Nome` = ? WHERE `Id` = ?;"
+            );
+
+            statement.setString(1, nome);
+            statement.setInt(2, id);
+
+
+            int rowsAffected = statement.executeUpdate();
+
+            if (rowsAffected <= 0)
+                throw new RuntimeException("Erro ao atualizar cliente.");
 
         } catch (SQLException e) {
             throw new RuntimeException(e.getMessage());
@@ -206,18 +217,41 @@ public class ClienteDAO {
         }
     }
 
-    public Cliente InativarCliente(Integer id) {
+    public void AtualizarEnderecoCliente(Integer id, Integer idEndereco) {
         PreparedStatement statement = null;
-        LocalDate localDate = LocalDate.now();
-        Date currentDate = (Date) Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        try {
+
+            statement = _connection.prepareStatement(
+                    "UPDATE `Cliente` SET `Id_Endereco` = ? WHERE `Id` = ?;"
+            );
+
+            statement.setInt(1, idEndereco);
+            statement.setInt(2, id);
+
+
+            int rowsAffected = statement.executeUpdate();
+
+            if (rowsAffected <= 0)
+                throw new RuntimeException("Erro ao atualizar cliente.");
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        } finally {
+            ConexaoDb.closeStatement(statement);
+        }
+    }
+
+    public void InativarCliente(Integer id) {
+        PreparedStatement statement = null;
 
         try {
             statement = _connection.prepareStatement(
-                    "UPDATE `Cliente` SET `Status_Cliente` = 'INATIVO', `Data_Inativacao` = ? WHERE `Cliente`.`Id` = ?;",
+                    "UPDATE `Cliente` SET `Status_Cliente` = 'INATIVO', `Data_Inativacao` = ? WHERE `Id` = ?;",
                     Statement.RETURN_GENERATED_KEYS
             );
 
-            statement.setDate(1, currentDate);
+            statement.setDate(1, Date.valueOf(LocalDate.now()));
             statement.setInt(2, id);
 
             int rowsAffectes = statement.executeUpdate();
@@ -225,38 +259,6 @@ public class ClienteDAO {
             if (rowsAffectes <= 0)
                 throw new RuntimeException("Erro ao inativar cliente.");
 
-            ResultSet resultSet = statement.getGeneratedKeys();
-
-            String clienteTipo = resultSet.getString("Tipo");
-            Cliente.TipoCliente tipo= null;
-
-            String statusCliente = resultSet.getString("Status_Cliente");
-            Cliente.StatusCliente status = null;
-
-            if ((clienteTipo != null) && (statusCliente != null)) {
-                try {
-
-                    tipo = Cliente.TipoCliente.valueOf(clienteTipo.toUpperCase());
-                    status = Cliente.StatusCliente.valueOf(statusCliente.toUpperCase());
-
-                } catch (IllegalArgumentException e) {
-                    throw new IllegalArgumentException(e.getMessage());
-                }
-            }
-
-            Cliente objeto = new Cliente(resultSet.getInt("Id"),
-                                        resultSet.getString("Nome"),
-                                        resultSet.getInt("Id_Endereco"),
-                                        resultSet.getDate("Data_Cadastro"),
-                                        resultSet.getDate("Data_Inativação"),
-                                        tipo,
-                                        status);
-
-
-            ConexaoDb.closeResultSet(resultSet);
-
-            return objeto;
-
         } catch (SQLException e) {
             throw new RuntimeException(e.getMessage());
         } finally {
@@ -264,13 +266,12 @@ public class ClienteDAO {
         }
     }
 
-    public Cliente AtivarCliente(Integer id) {
+    public void AtivarCliente(Integer id) {
         PreparedStatement statement = null;
 
         try {
             statement = _connection.prepareStatement(
-                    "UPDATE `Cliente` SET `Status_Cliente` = 'ATIVO' WHERE `Cliente`.`Id` = ?;",
-                    Statement.RETURN_GENERATED_KEYS
+                    "UPDATE `Cliente` SET `Status_Cliente` = 'ATIVO' WHERE `Id` = ?;"
             );
 
             statement.setInt(1, id);
@@ -279,39 +280,6 @@ public class ClienteDAO {
 
             if (rowsAffectes <= 0)
                 throw new RuntimeException("Erro ao ativar cliente.");
-
-            ResultSet resultSet = statement.getGeneratedKeys();
-
-            String clienteTipo = resultSet.getString("Tipo");
-            Cliente.TipoCliente tipo= null;
-
-            String statusCliente = resultSet.getString("Status_Cliente");
-            Cliente.StatusCliente status = null;
-
-            if ((clienteTipo != null) && (statusCliente != null)) {
-                try {
-
-                    tipo = Cliente.TipoCliente.valueOf(clienteTipo.toUpperCase());
-                    status = Cliente.StatusCliente.valueOf(statusCliente.toUpperCase());
-
-                } catch (IllegalArgumentException e) {
-                    throw new IllegalArgumentException(e.getMessage());
-                }
-            }
-
-            Cliente objeto = new Cliente(resultSet.getInt("Id"),
-                    resultSet.getString("Nome"),
-                    resultSet.getInt("Id_Endereco"),
-                    resultSet.getDate("Data_Cadastro"),
-                    resultSet.getDate("Data_Inativação"),
-                    tipo,
-                    status);
-
-
-            ConexaoDb.closeResultSet(resultSet);
-
-            return objeto;
-
         } catch (SQLException e) {
             throw new RuntimeException(e.getMessage());
         } finally {

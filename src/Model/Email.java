@@ -45,7 +45,7 @@ public class Email {
 
     @Override
     public String toString() {
-        return "Email{\n" +
+        return "\nEmail {\n" +
                 "\nId: " + Id +
                 ", \nEndereco: " + Endereco + '\'' +
                 "\n}";
