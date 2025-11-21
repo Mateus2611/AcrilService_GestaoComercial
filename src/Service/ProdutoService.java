@@ -1,68 +1,61 @@
 package Service;
 
-import DAO.MySQL.EnderecoDAO;
-import Model.Endereco;
-import Service.Interface.IOperacoesGenericasService;
+import DAO.MySQL.ProdutoDAO;
+import Model.Produto;
 
 import java.util.List;
 
-public class EnderecoService implements IOperacoesGenericasService<Endereco, Integer> {
+public class ProdutoService {
 
-    private final EnderecoDAO _enderecoDao;
+    private final ProdutoDAO _produtoDAO;
 
-    public EnderecoService(EnderecoDAO enderecoDao) {
-        _enderecoDao = enderecoDao;
+    public ProdutoService(ProdutoDAO produtoDAO) {
+        _produtoDAO = produtoDAO;
     }
 
-    @Override
-    public Endereco Criar(Endereco objeto) {
+    public Produto Criar(Produto objeto) {
         if (objeto == null)
             throw new RuntimeException("Objeto vazio. Preencha as informações");
 
         try {
-            return _enderecoDao.Criar(objeto);
+            return _produtoDAO.Criar(objeto);
         } catch (RuntimeException e) {
             throw new RuntimeException(e.getMessage());
         }
     }
 
-    @Override
-    public List<Endereco> BuscaGeral() {
+    public List<Produto> BuscaGeral() {
         try {
-            return _enderecoDao.BuscaGeral();
+            return _produtoDAO.BuscaGeral();
         } catch (RuntimeException e) {
             throw new RuntimeException(e.getMessage());
         }
     }
 
-    public Endereco BuscaPorId(Integer id) {
+    public Produto BuscaPorId(Integer id) {
         try {
-            return _enderecoDao.BuscaPorId(id);
+            return _produtoDAO.BuscaPorId(id);
         } catch (RuntimeException e) {
             throw new RuntimeException(e.getMessage());
         }
     }
 
-    @Override
-    public Endereco Atualizar(Integer id, Endereco objeto) {
+    public Produto Atualizar(Integer id, Produto objeto) {
         if (objeto == null)
             throw new RuntimeException("Objeto vazio. Preencha as informações.");
 
         try {
-            _enderecoDao.BuscaPorId(id);
-
-            return _enderecoDao.Atualizar(id, objeto);
+            return _produtoDAO.Atualizar(id, objeto);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
     }
 
-    @Override
     public void Excluir(Integer id) {
         try {
-            _enderecoDao.BuscaPorId(id);
+            _produtoDAO.BuscaPorId(id);
 
-            _enderecoDao.Excluir(id);
+            _produtoDAO.Excluir(id);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }

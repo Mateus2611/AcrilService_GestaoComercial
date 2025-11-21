@@ -5,6 +5,7 @@ import DAO.JDBC.ConexaoDb;
 import Model.Endereco;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class EnderecoDAO implements IOperacoesGenericasDAO<Integer, Endereco> {
@@ -57,7 +58,7 @@ public class EnderecoDAO implements IOperacoesGenericasDAO<Integer, Endereco> {
 
     public List<Endereco> BuscaGeral() {
        PreparedStatement statement = null;
-       List<Endereco> enderecos = null;
+       List<Endereco> enderecos = new ArrayList<Endereco>();
 
         try {
 
@@ -183,6 +184,5 @@ public class EnderecoDAO implements IOperacoesGenericasDAO<Integer, Endereco> {
         } finally {
             ConexaoDb.closeStatement(statement);
         }
-
     }
 }

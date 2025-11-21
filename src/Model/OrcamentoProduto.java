@@ -11,6 +11,11 @@ public class OrcamentoProduto {
         Quantidade = quantidade;
     }
 
+    public OrcamentoProduto(Integer idOrcamento, Integer idProduto) {
+        IdOrcamento = idOrcamento;
+        IdProduto = idProduto;
+    }
+
     private Integer IdOrcamento;
     private Integer IdProduto;
     public Integer Quantidade;
@@ -38,4 +43,5 @@ public class OrcamentoProduto {
     public void setQuantidade(Integer quantidade) {
         Quantidade = quantidade;
     }
+
 }

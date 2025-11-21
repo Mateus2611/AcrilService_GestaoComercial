@@ -27,8 +27,8 @@ public class OrcamentoDAO {
             );
 
             statement.setInt(1, objeto.getIdCliente());
-            statement.setDate(2, objeto.getDataCriacao());
-            statement.setDate(3, objeto.getDataValidade());
+            statement.setDate(2, (Date) objeto.getDataCriacao());
+            statement.setDate(3, (Date) objeto.getDataValidade());
             statement.setBigDecimal(4, objeto.getValor());
             statement.setBigDecimal(5, objeto.getDesconto());
             statement.setString(6, objeto.getStatus().name());
@@ -53,7 +53,7 @@ public class OrcamentoDAO {
         return objeto;
     }
 
-    public boolean AtualizarStatus(Integer id, Orcamento objeto) {
+    public Orcamento AtualizarStatus(Integer id, Orcamento objeto) {
         PreparedStatement statement = null;
 
         try {
@@ -68,7 +68,7 @@ public class OrcamentoDAO {
 
             int rowsAffected = statement.executeUpdate();
 
-            return rowsAffected > 0;
+            return objeto;
 
         } catch (SQLException e) {
             throw new RuntimeException(e.getMessage());
