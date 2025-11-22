@@ -5,7 +5,10 @@ import Model.OrcamentoProduto;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OrcamentoProdutoDAO {
 
@@ -15,7 +18,7 @@ public class OrcamentoProdutoDAO {
         _connection = connection;
     }
 
-    public void AdicionarProduto(OrcamentoProduto objeto) {
+    public OrcamentoProduto AdicionarProduto(OrcamentoProduto objeto) {
         PreparedStatement statement = null;
 
         try {
@@ -39,9 +42,43 @@ public class OrcamentoProdutoDAO {
         } finally {
             ConexaoDb.closeStatement(statement);
         }
+        return objeto;
     }
 
-    public void AtualizarQuantidade(OrcamentoProduto objeto) {
+    public List<OrcamentoProduto> BuscaOrcamentoId(int idOrcamento) {
+        PreparedStatement statement = null;
+        List<OrcamentoProduto> produtos = new ArrayList<>();
+
+        try {
+            statement = _connection.prepareStatement(
+                    "SELECT * FROM `Orcamento_Produto`" +
+                            "WHERE `Id_Orcamento` = ?;"
+            );
+
+            statement.setInt(1, idOrcamento);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                OrcamentoProduto objeto = new OrcamentoProduto(
+                        resultSet.getInt("Id_Orcamento"),
+                        resultSet.getInt("Id_Produto"),
+                        resultSet.getInt("Quantidade")
+                );
+                produtos.add(objeto);
+            }
+
+            ConexaoDb.closeResultSet(resultSet);
+            return produtos;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao buscar produtos do orçamento");
+        } finally {
+            ConexaoDb.closeStatement(statement);
+        }
+    }
+
+    public OrcamentoProduto AtualizarQuantidade(OrcamentoProduto objeto) {
         PreparedStatement statement = null;
 
         try {
@@ -64,6 +101,7 @@ public class OrcamentoProdutoDAO {
         } finally {
             ConexaoDb.closeStatement(statement);
         }
+        return objeto;
     }
 
     public void RemoverItem(OrcamentoProduto objeto) {
