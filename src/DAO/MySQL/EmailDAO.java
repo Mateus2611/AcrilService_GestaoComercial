@@ -5,9 +5,10 @@ import DAO.JDBC.ConexaoDb;
 import Model.Email;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
-public class EmailDAO implements IOperacoesGenericasDAO<Integer, Email> {
+public class EmailDAO{
 
     private final Connection _connection;
 
@@ -15,13 +16,12 @@ public class EmailDAO implements IOperacoesGenericasDAO<Integer, Email> {
         this._connection = _connection;
     }
 
-    @Override
     public Email Criar(Email objeto) {
         PreparedStatement statement = null;
 
         try {
             statement = _connection.prepareStatement(
-                    "INSERT INTO `email` (`Id_Cliente`, `Endereco`) " +
+                    "INSERT INTO `Email` (`Id_Cliente`, `Endereco`) " +
                             "VALUES ( ?, ?);",
                     Statement.RETURN_GENERATED_KEYS
             );
@@ -51,7 +51,7 @@ public class EmailDAO implements IOperacoesGenericasDAO<Integer, Email> {
 
     public List<Email> BuscaGeral(Integer idCliente) {
         PreparedStatement statement = null;
-        List<Email> emails = null;
+        List<Email> emails = new  ArrayList<Email>();
 
         try {
             statement = _connection.prepareStatement(
@@ -86,44 +86,6 @@ public class EmailDAO implements IOperacoesGenericasDAO<Integer, Email> {
         }
     }
 
-    @Override
-    public Email Atualizar(Integer id, Email objeto) {
-        PreparedStatement statement = null;
-
-        try {
-
-            statement = _connection.prepareStatement(
-                    "UPDATE `Email` SET `Id_Cliente` = ?, `Endereco` = ? " +
-                            "WHERE `email`.`Id` = ?;",
-                    Statement.RETURN_GENERATED_KEYS
-            );
-
-            statement.setInt(1, objeto.getIdCliente());
-            statement.setString(2, objeto.getEndereco());
-            statement.setInt(3, id);
-
-            int rowsAffected = statement.executeUpdate();
-
-            if (rowsAffected <= 0)
-                throw new RuntimeException("Erro ao atualizar endereço");
-
-            ResultSet resultSet = statement.getGeneratedKeys();
-
-            if (resultSet.next())
-                objeto.setId(resultSet.getInt(1));
-
-            ConexaoDb.closeResultSet(resultSet);
-
-            return objeto;
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e.getMessage());
-        } finally {
-            ConexaoDb.closeStatement(statement);
-        }
-    }
-
-    @Override
     public void Excluir(Integer id) {
         PreparedStatement statement = null;
 

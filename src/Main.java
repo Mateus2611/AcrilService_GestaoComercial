@@ -1,7 +1,4 @@
-import View.Console.EnderecoView;
-import View.Console.OrcamentoProdutoView;
-import View.Console.OrcamentoView;
-import View.Console.ProdutoView;
+import View.Console.*;
 
 import java.util.Arrays;
 import java.util.Scanner;
@@ -9,7 +6,7 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        EnderecoView enderecoView = new EnderecoView();
+        ClienteView clienteView = new ClienteView();
         ProdutoView produtoView = new ProdutoView();
         OrcamentoView orcamentoView = new OrcamentoView();
         OrcamentoProdutoView orcamentoProdutoView = new OrcamentoProdutoView();
@@ -20,7 +17,7 @@ public class Main {
         String escolha = sc.nextLine().toUpperCase();
 
         switch (Rotas.valueOf(escolha)) {
-            case ENDERECO -> enderecoView.SelecionarAcaoEndereco();
+            case CLIENTE -> clienteView.SelecionarAcaoCliente();
             case PRODUTO -> produtoView.SelecionarAcaoProduto();
             case ORCAMENTO -> orcamentoView.SelecionarAcaoOrcamento();
             case ORCAMENTOPRODUTO -> orcamentoProdutoView.SelecionarAcaoOrcamentoProduto();
@@ -28,7 +25,7 @@ public class Main {
     }
 
     enum Rotas {
-        ENDERECO,
+        CLIENTE,
         PRODUTO,
         ORCAMENTO,
         ORCAMENTOPRODUTO,

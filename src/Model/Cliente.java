@@ -1,6 +1,7 @@
 package Model;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Cliente {
@@ -33,14 +34,20 @@ public class Cliente {
         Status = status;
     }
 
-    private Integer Id;
+    public Cliente(TipoCliente tipo, String nome) {
+        Tipo = tipo;
+        Nome = nome;
+    }
+
+    public Integer Id;
     public String Nome;
-    public List<Email> Emails;
+    public List<Email> Emails = new ArrayList<Email>();
     public Integer IdEndereco;
+    public Endereco Endereco;
     public Date DataCadastro;
     public Date DataInativacao;
     public TipoCliente Tipo;
-    private StatusCliente Status;
+    public StatusCliente Status;
 
     public Integer getId() {
         return Id;
@@ -68,6 +75,14 @@ public class Cliente {
 
     public void setDataCadastro(Date dataCadastro) {
         DataCadastro = dataCadastro;
+    }
+
+    public Endereco getEndereco() {
+        return Endereco;
+    }
+
+    public void setEndereco(Endereco endereco) {
+        Endereco = endereco;
     }
 
     public Date getDataCadastro() {
@@ -104,6 +119,21 @@ public class Cliente {
 
     public void setStatus(StatusCliente status) {
         Status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "\nCliente {" +
+                "\nId: " + Id +
+                ", \nNome: '" + Nome + '\'' +
+                ", \nEmails: \n" + Emails.toString() +
+                ", \nIdEndereco: " + IdEndereco +
+                ", \nEndereco: \n" + Endereco.toString() +
+                ", \nDataCadastro: " + DataCadastro +
+                ", \nDataInativacao: " + DataInativacao +
+                ", \nTipo: " + Tipo +
+                ", \nStatus: " + Status +
+                '}';
     }
 
     public enum TipoCliente {

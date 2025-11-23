@@ -2,16 +2,17 @@ package View.Console;
 
 
 import DAO.JDBC.ConexaoDb;
-import DAO.MySQL.OrcamentoDAO;
-import DAO.MySQL.OrcamentoProdutoDAO;
-import DAO.MySQL.ProdutoDAO;
+import DAO.MySQL.*;
+import Model.Email;
 import Model.Orcamento;
 import Model.OrcamentoProduto;
 import Model.Produto;
+import Service.ClienteService;
 import Service.OrcamentoProdutoService;
 import Service.OrcamentoService;
 import Service.ProdutoService;
 
+import java.sql.Connection;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -22,15 +23,23 @@ enum orcamentoProdutoOpcoes {
 }
 
 public class OrcamentoProdutoView {
+    Connection _conn = ConexaoDb.openConnection();
     Scanner sc = new Scanner(System.in);
-    OrcamentoProdutoDAO orcamentoProdutoDao = new OrcamentoProdutoDAO(ConexaoDb.openConnection());
+    OrcamentoProdutoDAO orcamentoProdutoDao = new OrcamentoProdutoDAO(_conn);
     OrcamentoProdutoService orcamentoProdutoService = new OrcamentoProdutoService(orcamentoProdutoDao);
 
-    OrcamentoDAO orcamentoDao = new OrcamentoDAO(ConexaoDb.openConnection());
-    OrcamentoService orcamentoService = new OrcamentoService(orcamentoDao);
-
-    ProdutoDAO produtoDAO = new ProdutoDAO(ConexaoDb.openConnection());
+    ProdutoDAO produtoDAO = new ProdutoDAO(_conn);
     ProdutoService produtoService = new ProdutoService(produtoDAO);
+
+    ClienteDAO clienteDAO = new ClienteDAO(_conn);
+    EnderecoDAO enderecoDAO = new EnderecoDAO(_conn);
+    EmailDAO emailDAO = new EmailDAO(_conn);
+    ClienteService clienteService = new ClienteService(clienteDAO, enderecoDAO, emailDAO);
+
+    OrcamentoDAO orcamentoDao = new OrcamentoDAO(ConexaoDb.openConnection());
+    OrcamentoService orcamentoService = new OrcamentoService(orcamentoDao, clienteDAO, orcamentoProdutoDao, produtoDAO);
+
+
 
     public void SelecionarAcaoOrcamentoProduto() {
 
