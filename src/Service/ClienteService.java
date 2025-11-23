@@ -7,6 +7,7 @@ import Model.Cliente;
 import Model.Email;
 import Model.Endereco;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ClienteService {
@@ -76,6 +77,14 @@ public class ClienteService {
         }
     }
 
+    public List<Email> ExibirEmailsCliente(Integer idCliente) {
+        try {
+            return _emailDAO.BuscaGeral(idCliente);
+        } catch (RuntimeException ex) {
+            throw new RuntimeException(ex.getMessage());
+        }
+    }
+
     public Cliente AtualizarTipoCliente(Integer id, String tipoCliente) {
         try {
 
@@ -109,6 +118,29 @@ public class ClienteService {
             _enderecoDAO.Excluir(idEnderecoDesatualizado);
 
             return BuscaPorId(idCliente);
+        } catch (RuntimeException ex) {
+            throw new RuntimeException(ex.getMessage());
+        }
+    }
+
+    public List<Email> CriarEmailCliente(Integer idCliente, List<Email> emails) {
+        try {
+            List<Email> novosEmails = new ArrayList<Email>();
+
+            for (Email email : emails) {
+                email.setIdCliente(idCliente);
+                novosEmails.add(_emailDAO.Criar(email));
+            }
+
+            return novosEmails;
+        } catch (RuntimeException ex) {
+            throw new RuntimeException(ex.getMessage());
+        }
+    }
+
+    public void ExcluirEmailCliente(Integer idEmail) {
+        try {
+            _emailDAO.Excluir(idEmail);
         } catch (RuntimeException ex) {
             throw new RuntimeException(ex.getMessage());
         }

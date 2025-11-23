@@ -9,14 +9,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
-enum Opcoes {
-    Criar,
-    BuscaGeral,
-    BuscarId,
-    Atualizar,
-    Excluir
-}
-
 public class EnderecoView {
 
     Scanner sc = new Scanner(System.in);

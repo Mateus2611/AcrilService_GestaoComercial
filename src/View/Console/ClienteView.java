@@ -22,7 +22,10 @@ enum Menu {
     INATIVAR,
     ATUALIZAR_NOME,
     ATUALIZAR_TIPO,
-    ATUALIZAR_ENDERECO
+    ATUALIZAR_ENDERECO,
+    EXIBIR_EMAILS,
+    ADICIONAR_EMAILS,
+    REMOVER_EMAILS
 }
 
 public class ClienteView {
@@ -71,6 +74,15 @@ public class ClienteView {
             case ATUALIZAR_ENDERECO:
                 AtualizarEnderecoCliente();
                 break;
+            case EXIBIR_EMAILS:
+                ExibirEmailsCliente();
+                break;
+            case ADICIONAR_EMAILS:
+                AdicionarEmailsCliente();
+                break;
+            case REMOVER_EMAILS:
+                RemoverEmailCliente();
+                break;
         }
     }
 
@@ -97,33 +109,31 @@ public class ClienteView {
     }
 
     public void BuscaPorId() {
-        System.out.println("Informe o ID do usuário: ");
-        Integer id = sc.nextInt();
-        sc.nextLine();
+        int id = PegarIdCliente();
 
         System.out.println(_clienteServices.BuscaPorId(id).toString());
     }
 
+    public void ExibirEmailsCliente() {
+        int id = PegarIdCliente();
+
+        System.out.println(_clienteServices.ExibirEmailsCliente(id).toString());
+    }
+
     public void AtivarCliente() {
-        System.out.println("Informe o ID do usuário: ");
-        Integer id = sc.nextInt();
-        sc.nextLine();
+        int id = PegarIdCliente();
 
         System.out.println(_clienteServices.AtivarCliente(id).toString());
     }
 
     public void InativarCliente() {
-        System.out.println("Informe o ID do usuário: ");
-        Integer id = sc.nextInt();
-        sc.nextLine();
+        int id = PegarIdCliente();
 
         System.out.println(_clienteServices.InativarCliente(id).toString());
     }
 
     public void AtualizarTipoCliente() {
-        System.out.println("Informe o ID do usuário: ");
-        Integer id = sc.nextInt();
-        sc.nextLine();
+        int id = PegarIdCliente();
 
         System.out.println("Selecione o tipo do cliente: ");
         System.out.println(Arrays.toString(Cliente.TipoCliente.values()));
@@ -133,23 +143,45 @@ public class ClienteView {
     }
 
     public void AtualizarNomeCliente() {
-        System.out.println("Informe o ID do usuário: ");
-        Integer id = sc.nextInt();
-        sc.nextLine();
+        int id = PegarIdCliente();
 
-        System.out.println("Selecione o nome do cliente: ");
+        System.out.println("Informe o nome do cliente: ");
         String nome = sc.nextLine();
 
         System.out.println(_clienteServices.AtualizarNomeCliente(id, nome));
     }
 
     public void AtualizarEnderecoCliente() {
-        System.out.println("Informe o ID do usuário: ");
-        Integer id = sc.nextInt();
-        sc.nextLine();
+        int id = PegarIdCliente();
 
         Endereco endereco = _enderecoView.CriarEndereco();
 
         System.out.println(_clienteServices.AtualizarEnderecoCliente(id, endereco));
+    }
+
+    public void AdicionarEmailsCliente() {
+        int idCliente = PegarIdCliente();
+
+        List<Email> emails = _clienteServices.CriarEmailCliente(idCliente, _emailView.CriarEmail());
+
+        System.out.println(emails.toString());
+    }
+
+    public void RemoverEmailCliente() {
+        System.out.println("Informe o ID do email que deseja remover: ");
+        int idEmail = sc.nextInt();
+        sc.nextLine();
+
+        _clienteServices.ExcluirEmailCliente(idEmail);
+
+        System.out.println("Email removido com sucesso!");
+    }
+
+    public Integer PegarIdCliente() {
+        System.out.println("Informe o ID do cliente: ");
+        int idCliente = sc.nextInt();
+        sc.nextLine();
+
+        return idCliente;
     }
 }
