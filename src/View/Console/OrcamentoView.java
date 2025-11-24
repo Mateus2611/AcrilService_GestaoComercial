@@ -7,13 +7,17 @@ import DAO.MySQL.OrcamentoDAO;
 import DAO.MySQL.OrcamentoProdutoDAO;
 import DAO.MySQL.ProdutoDAO;
 import Model.Orcamento;
+import Model.OrcamentoProduto;
+import Model.Produto;
+import Service.OrcamentoProdutoService;
 import Service.OrcamentoService;
+import Service.ProdutoService;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 import java.util.Scanner;
 
@@ -21,7 +25,9 @@ enum orcamentoOpcoes {
     CRIAR,
     BUSCAGERAL,
     BUSCAID,
-    ATUALIZAR
+    ATUALIZAR_STATUS,
+    ATUALIZAR_QUANTIDADE,
+    EXCLUIR_PRODUTO
 }
 
 public class OrcamentoView {
@@ -31,6 +37,8 @@ public class OrcamentoView {
     ClienteDAO clienteDAO = new ClienteDAO(ConexaoDb.openConnection());
     OrcamentoProdutoDAO orcamentoProdutoDAO = new OrcamentoProdutoDAO(ConexaoDb.openConnection());
     ProdutoDAO produtoDAO = new ProdutoDAO(ConexaoDb.openConnection());
+    ProdutoService produtoService = new ProdutoService(produtoDAO);
+    OrcamentoProdutoService orcamentoProdutoService = new OrcamentoProdutoService(orcamentoProdutoDAO);
 
     OrcamentoService orcamentoService = new OrcamentoService(orcamentoDAO, clienteDAO, orcamentoProdutoDAO, produtoDAO);
 
@@ -51,8 +59,14 @@ public class OrcamentoView {
             case BUSCAID:
                 BuscaId();
                 break;
-            case ATUALIZAR:
+            case ATUALIZAR_STATUS:
                 AtualizarStatus();
+                break;
+            case ATUALIZAR_QUANTIDADE:
+                AtualizarQuantidadeProduto();
+                break;
+            case EXCLUIR_PRODUTO:
+                ExcluirProduto();
                 break;
         }
     }
@@ -74,7 +88,7 @@ public class OrcamentoView {
                 System.out.println("Informe a data de criação do orçamento");
                 SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
                 String dataString = sc.nextLine();
-                dataCriacao = format.parse(dataString);
+                dataCriacao = new Date(format.parse(dataString).getTime());
 
                 System.out.println("Informe a data de validade do orçamento");
                 SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
@@ -83,14 +97,8 @@ public class OrcamentoView {
                 if (dataString2.isEmpty()) {
                     dataValidade = null;
                 } else {
-                    dataValidade = format2.parse(dataString2);
+                    dataValidade = new Date(format2.parse(dataString2).getTime());
                 }
-
-                System.out.println(dataValidade);
-
-                System.out.println("Informe o valor do orçamento");
-                valor = new BigDecimal(sc.nextLine());
-                System.out.println(valor);
 
                 System.out.println("Informe o desconto aplicado em cima do valor");
                 String descontoString = sc.nextLine();
@@ -101,27 +109,38 @@ public class OrcamentoView {
                     desconto = new BigDecimal(descontoString);
                 }
 
-                System.out.println(desconto);
-                break;
+                Orcamento.StatusOrcamento status = Orcamento.StatusOrcamento.PENDENTE;
+                Orcamento orcamento = new Orcamento(idCliente, dataCriacao, dataValidade, BigDecimal.ZERO, status, desconto);
+
+                orcamento = orcamentoService.Criar(orcamento);
+
+                System.out.println("Informe o ID do produto");
+                int produtoId = Integer.parseInt(sc.nextLine());
+                System.out.println(produtoId);
+
+                Produto produtoObjeto = produtoService.BuscaPorId(produtoId);
+
+                if (produtoObjeto == null) {
+                    System.out.println("Orçamento ou produto nõo encontrado");
+                } else {
+                    System.out.println("Digite a quantidade do produto");
+
+                    int quantidade = Integer.parseInt(sc.nextLine());
+
+                    try {
+                        OrcamentoProduto orcamentoProduto = new OrcamentoProduto(orcamento.getId(), produtoId, quantidade);
+                        orcamentoProdutoService.Criar(orcamentoProduto);
+                        System.out.println("Orçamento adicionado com sucesso!");
+                        break;
+                    } catch (RuntimeException e) {
+                        System.out.println("Erro ao adicionar produto ao orçamento");
+                    }
+                }
             } catch (NumberFormatException e) {
                 System.out.println("Entrada inválida");
             } catch (ParseException e) {
                 System.out.println("Formato de data inválido, utilize o seguinte formato: Dia/Mês/Ano");
             }
-        }
-
-        try {
-
-            Orcamento.StatusOrcamento status = Orcamento.StatusOrcamento.PENDENTE;
-
-            Orcamento objeto = new Orcamento(idCliente, dataCriacao, dataValidade,
-                    valor, status, desconto);
-
-            orcamentoService.Criar(objeto);
-            System.out.println("Orçamento Criado com sucesso");
-
-        } catch (RuntimeException e) {
-            System.out.println("Erro ao Criar Orçamento");
         }
     }
 
@@ -157,6 +176,48 @@ public class OrcamentoView {
         }
     }
 
+    private void AtualizarQuantidadeProduto() {
+
+        System.out.println("Informe o ID do orçamento");
+        int orcamentoId = Integer.parseInt(sc.nextLine());
+        System.out.println(orcamentoId);
+
+        System.out.println("Informe o ID do produto");
+        int produtoId = Integer.parseInt(sc.nextLine());
+        System.out.println(produtoId);
+
+        Produto produtoObjeto = produtoService.BuscaPorId(produtoId);
+        Orcamento orcamentoObjeto = orcamentoService.BuscaPorId(orcamentoId);
+
+        if (produtoObjeto == null || orcamentoObjeto == null) {
+            System.out.println("Produto ou orçamento não encontrado");
+
+        } else {
+            System.out.println("Informe a nova quantidade do produto");
+            Integer quantidade = Integer.parseInt(sc.nextLine());
+            System.out.println(quantidade);
+
+            OrcamentoProduto orcamentoProduto = new OrcamentoProduto(orcamentoId, produtoId, quantidade);
+            orcamentoProdutoService.AtualizarQuantidade(orcamentoId, orcamentoProduto);
+            System.out.println("Quantidade atualizada com sucesso");
+        }
+    }
+
+    private void ExcluirProduto() {
+
+        System.out.println("Informe o ID do orçamento");
+        int idOrcamento = Integer.parseInt(sc.nextLine());
+        System.out.println(idOrcamento);
+
+        System.out.println("Informe o ID do produto para remover do orçamento");
+        int idProduto = Integer.parseInt(sc.nextLine());
+
+        Produto produtoObjeto = produtoService.BuscaPorId(idProduto);
+        Orcamento orcamentoObjeto = orcamentoService.BuscaPorId(idOrcamento);
+        OrcamentoProduto orcamentoProduto = new OrcamentoProduto(idOrcamento, idProduto);
+        orcamentoProdutoService.Excluir(idOrcamento, orcamentoProduto);
+    }
+
     private void AtualizarStatus() {
         System.out.println("Informe o ID do Orçamento que deseja atualizar");
         int id = Integer.parseInt(sc.nextLine());
@@ -168,7 +229,7 @@ public class OrcamentoView {
         } else {
             System.out.println("Status atual do orçamento: " + objeto.getStatus());
 
-            System.out.println("Digite o novo status (APROVADO, REIJETADO, EXPIRADO OU PENDENTE");
+            System.out.println("Digite o novo status (APROVADO, REPROVADO, EXPIRADO OU PENDENTE");
             String resp = sc.nextLine().toUpperCase();
 
             try {

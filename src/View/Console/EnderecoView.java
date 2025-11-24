@@ -3,39 +3,18 @@ package View.Console;
 import DAO.JDBC.ConexaoDb;
 import DAO.MySQL.EnderecoDAO;
 import Model.Endereco;
-import Service.EnderecoService;
+import com.sun.tools.javac.Main;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
-enum Opcoes {
-    Criar,
-    BuscaGeral
-}
-
 public class EnderecoView {
 
     Scanner sc = new Scanner(System.in);
     EnderecoDAO enderecoDAO = new EnderecoDAO(ConexaoDb.openConnection());
-    EnderecoService enderecoService = new EnderecoService(enderecoDAO);
 
-    public void SelecionarAcaoEndereco() {
-
-        System.out.println("\n\nSelecione a operação desejada\n\n ");
-        System.out.println(Arrays.toString(Opcoes.values()));
-        System.out.println();
-        String resp = sc.next();
-
-        switch (Opcoes.valueOf(resp)) {
-            case Criar:
-                CriarEndereco();
-            case BuscaGeral:
-                BuscaGeral();
-        }
-    }
-
-    private void CriarEndereco() {
+    public Endereco CriarEndereco() {
 
         System.out.println("Informe o seu CEP: ");
         String Cep = sc.next();
@@ -59,14 +38,6 @@ public class EnderecoView {
         System.out.println(Logradouro);
 
         Endereco objeto = new Endereco(Cep, Bairro, Estado, Cidade, Logradouro);
-        objeto = enderecoService.Criar(objeto);
-
-        System.out.println(objeto.toString());
-    }
-
-    private void BuscaGeral() {
-        List<Endereco> enderecos = enderecoService.BuscaGeral();
-
-        enderecos.forEach(System.out::println);
+        return objeto;
     }
 }

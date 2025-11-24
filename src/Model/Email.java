@@ -5,6 +5,10 @@ public class Email {
     public Email() {
     }
 
+    public Email(String endereco) {
+        Endereco = endereco;
+    }
+
     public Email(Integer id, Integer idCliente, String endereco) {
         Id = id;
         IdCliente = idCliente;
@@ -37,5 +41,13 @@ public class Email {
 
     public void setEndereco(String endereco) {
         Endereco = endereco;
+    }
+
+    @Override
+    public String toString() {
+        return "\nEmail {\n" +
+                "\nId: " + Id +
+                ", \nEndereco: " + Endereco + '\'' +
+                "\n}";
     }
 }
