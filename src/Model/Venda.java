@@ -1,6 +1,6 @@
 package Model;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class Venda {
 
@@ -27,6 +27,7 @@ public class Venda {
 
     private Integer Id;
     private Integer IdOrcamento;
+    private Orcamento Orcamento;
     private Date DataCriacao;
     private Date PrazoPagamento;
     private Date DataConclusao;
@@ -46,6 +47,14 @@ public class Venda {
 
     public void setIdOrcamento(Integer idOrcamento) {
         IdOrcamento = idOrcamento;
+    }
+
+    public Orcamento getOrcamento() {
+        return Orcamento;
+    }
+
+    public void setOrcamento(Orcamento orcamento) {
+        Orcamento = orcamento;
     }
 
     public Date getDataCriacao() {
@@ -80,9 +89,22 @@ public class Venda {
         StatusPagamento = statusPagamento;
     }
 
-    public static enum StatusPagamento {
+    @Override
+    public String toString() {
+        return
+                "\nId: " + Id +
+                ", \nIdOrcamento:" + IdOrcamento +
+                ", \n" + Orcamento.toString() +
+                ", \nDataCriacao:" + DataCriacao +
+                ", \nPrazoPagamento:" + PrazoPagamento +
+                ", \nDataConclusao:" + DataConclusao +
+                ", \nStatusPagamento:" + StatusPagamento;
+    }
+
+    public enum StatusPagamento {
         APROVADO,
         REJEITADO,
-        PENDENTE
+        PENDENTE,
+        EXPIRADO
     }
 }

@@ -134,8 +134,8 @@ public class Orcamento {
 
         return "Orcamento: " +
                 "\nId = " + Id +
-                "\nCliente = " + nomeCliente +
                 "\nIdCliente = " + IdCliente +
+                "\nCliente = " + nomeCliente +
                 "\nProdutos = " + produtos +
                 "\nDataCriacao = " + format.format(DataCriacao) +
                 "\nDataValidade = " + format.format(DataValidade) +

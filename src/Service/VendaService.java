@@ -18,23 +18,19 @@ public class VendaService {
         _orcamentoDao = orcamentoDao;
     }
 
-    public Venda Criar(Venda objeto, Integer idOrcamento) {
-        if (objeto == null) {
-            throw new RuntimeException("Objeto Venda vazio. Preencha as informações.");
-        }
+    public Venda Criar(Integer idOrcamento, Integer prazo) {
+        Venda objeto = new Venda();
 
         try {
-            if (objeto.getIdOrcamento() != null) {
-                Orcamento orcamento = _orcamentoDao.BuscaId(idOrcamento);
-                objeto.setIdOrcamento(idOrcamento);
-                if (orcamento == null) {
-                    throw new RuntimeException("Erro: O Orçamento informado não existe.");
-                }
-            } else {
-                throw new RuntimeException("Erro: É necessário vincular um ID de Orçamento para criar uma venda.");
+            Orcamento orcamento = _orcamentoDao.BuscaId(idOrcamento);
+            objeto.setIdOrcamento(idOrcamento);
+            if (orcamento == null) {
+                throw new RuntimeException("Erro: O Orçamento informado não existe.");
             }
+            objeto = _vendaDao.Criar(objeto, prazo);
+            objeto.setOrcamento(orcamento);
 
-            return _vendaDao.Criar(objeto);
+            return objeto;
 
         } catch (RuntimeException e) {
             throw new RuntimeException(e.getMessage());
@@ -44,7 +40,14 @@ public class VendaService {
     public List<Venda> BuscaGeral() {
         try {
 
-            return _vendaDao.BuscaGeral();
+            List<Venda> vendas = _vendaDao.BuscaGeral();
+
+            for (Venda venda : vendas) {
+                Orcamento orcamento = _orcamentoDao.BuscaId(venda.getIdOrcamento());
+                venda.setOrcamento(orcamento);
+            }
+
+            return vendas;
 
         } catch (RuntimeException e) {
             throw new RuntimeException(e.getMessage());
@@ -53,25 +56,28 @@ public class VendaService {
 
     public Venda BuscaPorId(Integer id) {
         try {
-            return _vendaDao.BuscaId(id);
+            Venda venda = _vendaDao.BuscaId(id);
+            venda.setOrcamento(
+                    _orcamentoDao.BuscaId(
+                            venda.getIdOrcamento()
+                    ));
+
+            return venda;
         } catch (RuntimeException e) {
             throw new RuntimeException(e.getMessage());
         }
     }
 
-    public boolean AtualizarStatusPagamento(Integer id, Venda.StatusPagamento statusPagamento) {
+    public Venda AtualizarStatusPagamento(Integer id, String statusPagamento) {
         if (statusPagamento == null) {
             throw new RuntimeException("Objeto vazio. Preencha as informações.");
         }
 
         try {
-            Venda vendaExistente = _vendaDao.BuscaId(id);
-            if (vendaExistente == null) {
-                throw new RuntimeException("Venda não encontrada para atualização.");
-            }
+            if (!_vendaDao.AtualizarStatusPagamento(id, statusPagamento))
+                throw new RuntimeException("Falha ao atualizar status da venda.");
 
-            return _vendaDao.AtualizarStatusPagamento(id, statusPagamento);
-
+            return BuscaPorId(id);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
