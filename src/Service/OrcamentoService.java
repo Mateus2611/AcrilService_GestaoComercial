@@ -9,6 +9,7 @@ import Model.Orcamento;
 import Model.OrcamentoProduto;
 import Model.Produto;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +46,7 @@ public class OrcamentoService {
             for (Orcamento orcamento : orcamentos) {
 
                 try {
-                    Cliente cliente = _clienteDao.BuscaPorId(orcamento.getId());
+                    Cliente cliente = _clienteDao.BuscaPorId(orcamento.getIdCliente());
                     if (cliente != null) {
                         orcamento.setNomeCliente(cliente.getNome());
                     }
@@ -55,18 +56,33 @@ public class OrcamentoService {
 
                 List<OrcamentoProduto> produtos = _orcamentoProdutoDao.BuscaOrcamentoId(orcamento.getId());
                 List<String> nomeProdutos = new ArrayList<>();
+                BigDecimal valorTotal = BigDecimal.ZERO;
 
                 for (OrcamentoProduto produto : produtos) {
                     try {
                         Produto p = _produtoDao.BuscaPorId(produto.getIdProduto());
                         if (p != null) {
-                            nomeProdutos.add(p.getNome() + "Quantidade: " + produto.getQuantidade());
+                            nomeProdutos.add(p.getNome());
+
+                            BigDecimal valor = p.getValor().multiply(new BigDecimal(produto.getQuantidade()));
+                            valorTotal = valorTotal.add(valor);
                         }
                     } catch (RuntimeException e) {
                         nomeProdutos.add("Nenhum produto encontrado");
                     }
                 }
                 orcamento.setNomeProdutos(nomeProdutos);
+
+                if (orcamento.getDesconto() != null) {
+                    valorTotal = valorTotal.subtract(orcamento.getDesconto());
+                }
+
+                if (valorTotal.compareTo(BigDecimal.ZERO) < 0) {
+                    valorTotal = BigDecimal.ZERO;
+                    orcamento.setDesconto(BigDecimal.ZERO);
+                }
+
+                orcamento.setValor(valorTotal);
             }
             return orcamentos;
 
@@ -77,7 +93,51 @@ public class OrcamentoService {
 
     public Orcamento BuscaPorId(Integer id) {
         try {
-            return _orcamentoDao.BuscaId(id);
+            Orcamento orcamento = _orcamentoDao.BuscaId(id);
+
+            if (orcamento != null) {
+
+                try {
+                    Cliente cliente = _clienteDao.BuscaPorId(orcamento.getIdCliente());
+                    if (cliente != null) {
+                        orcamento.setNomeCliente(cliente.getNome());
+                    }
+                } catch (RuntimeException e) {
+                    orcamento.setNomeCliente("Nenhum cliente encontrado");
+                }
+
+                List<OrcamentoProduto> produtos = _orcamentoProdutoDao.BuscaOrcamentoId(orcamento.getId());
+                List<String> nomeProdutos = new ArrayList<>();
+                BigDecimal valorTotal = BigDecimal.ZERO;
+
+                for (OrcamentoProduto produto : produtos) {
+                    try {
+                        Produto p = _produtoDao.BuscaPorId(produto.getIdProduto());
+                        if (p != null) {
+                            nomeProdutos.add(p.getNome());
+
+                            BigDecimal valor = p.getValor().multiply(new BigDecimal(produto.getQuantidade()));
+                            valorTotal = valorTotal.add(valor);
+                        }
+                    } catch (RuntimeException e) {
+                        nomeProdutos.add("Nenhum produto encontrado");
+                    }
+                }
+                orcamento.setNomeProdutos(nomeProdutos);
+
+                if (orcamento.getDesconto() != null) {
+                    valorTotal = valorTotal.subtract(orcamento.getDesconto());
+                }
+
+                if (valorTotal.compareTo(BigDecimal.ZERO) < 0) {
+                    valorTotal = BigDecimal.ZERO;
+                    orcamento.setDesconto(BigDecimal.ZERO);
+                }
+
+                orcamento.setValor(valorTotal);
+            }
+
+            return orcamento;
         } catch (RuntimeException e) {
             throw new RuntimeException(e.getMessage());
         }

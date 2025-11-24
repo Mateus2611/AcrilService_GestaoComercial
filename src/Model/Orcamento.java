@@ -2,6 +2,7 @@ package Model;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class Orcamento {
@@ -30,6 +31,8 @@ public class Orcamento {
         Status = status;
         Desconto = desconto;
     }
+
+    SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 
     private Integer Id;
     private Integer IdCliente;
@@ -106,6 +109,10 @@ public class Orcamento {
         return Desconto;
     }
 
+    public void setDesconto(BigDecimal desconto) {
+        Desconto = desconto;
+    }
+
     public void setStatus(StatusOrcamento status) {
         Status = status;
     }
@@ -126,14 +133,14 @@ public class Orcamento {
         }
 
         return "Orcamento: " +
-                "Id = " + Id +
-                " | Cliente = " + nomeCliente +
-                " | IdCliente = " + IdCliente +
-                " | Produtos = [" + produtos + "]" +
-                " | DataCriacao = " + DataCriacao +
-                " | DataValidade = " + DataValidade +
-                " | Valor = " + Valor +
-                " | Status = " + Status +
-                " | Desconto = " + Desconto;
+                "\nId = " + Id +
+                "\nCliente = " + nomeCliente +
+                "\nIdCliente = " + IdCliente +
+                "\nProdutos = " + produtos +
+                "\nDataCriacao = " + format.format(DataCriacao) +
+                "\nDataValidade = " + format.format(DataValidade) +
+                "\nValor = " + Valor +
+                "\nStatus = " + Status +
+                "\nDesconto = " + Desconto + "\n";
     }
 }
