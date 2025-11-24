@@ -31,3 +31,7 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+database.properties
+src/DAO/JDBC
+lib

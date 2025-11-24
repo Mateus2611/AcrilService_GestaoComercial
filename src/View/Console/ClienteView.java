@@ -47,7 +47,7 @@ public class ClienteView {
         System.out.println("\n\nSelecione a operação desejada\n\n ");
         System.out.println(Arrays.toString(Menu.values()));
         System.out.println();
-        String resp = sc.next().toUpperCase();
+        String resp = sc.nextLine().toUpperCase();
 
         switch (Menu.valueOf(resp)) {
             case CRIAR:
@@ -91,7 +91,7 @@ public class ClienteView {
         System.out.println("Informe o nome do cliente.");
         String nomeCliente = sc.nextLine();
 
-        System.out.println("Informa o Tipo do cliente. (CPF/CNPJ)");
+        System.out.println("Informe o Tipo do cliente. (CPF/CNPJ)");
         String tipoCliente = sc.next().toUpperCase();
 
         Cliente cliente = new Cliente(Cliente.TipoCliente.valueOf(tipoCliente), nomeCliente);

@@ -138,9 +138,21 @@ public class ProdutoView {
     }
 
     private void Excluir() {
-        System.out.println("Informe o id do produto para exclusão");
-        int id = Integer.parseInt(sc.nextLine());
-        produtoService.Excluir(id);
-        System.out.println("Produto excluído com sucesso");
+
+        while (true) {
+            System.out.println("Informe o id do produto para exclusão:");
+
+            try {
+                int id = Integer.parseInt(sc.nextLine());
+                produtoService.Excluir(id);
+                System.out.println("Produto excluído com sucesso");
+                break;
+
+            } catch (NumberFormatException e) {
+                System.out.println("ID inválido");
+            } catch (RuntimeException e) {
+                System.out.println("Não foi possível excluir o produto");
+            }
+        }
     }
 }
