@@ -10,6 +10,7 @@ public class Main {
         ProdutoView produtoView = new ProdutoView();
         OrcamentoView orcamentoView = new OrcamentoView();
         VendaView vendaView = new VendaView();
+        AvaliacaoView avaliacaoView = new AvaliacaoView();
 
         System.out.println("\n\nSelecione a rota desejada\n\n");
         System.out.println(Arrays.toString(Rotas.values()));
@@ -21,6 +22,7 @@ public class Main {
             case PRODUTO -> produtoView.SelecionarAcaoProduto();
             case ORCAMENTO -> orcamentoView.SelecionarAcaoOrcamento();
             case VENDA -> vendaView.SelecionarAcaoVenda();
+            case AVALIACAO -> avaliacaoView.SelecionarAcaoAvaliacao();
         }
     }
 
@@ -29,6 +31,7 @@ public class Main {
         PRODUTO,
         ORCAMENTO,
         VENDA,
+        AVALIACAO,
         SAIR
     }
 }

@@ -27,7 +27,7 @@ public class AvaliacaoDAO implements IOperacoesGenericasDAO<Integer, Avaliacao> 
 
         try {
             statement = _connection.prepareStatement(
-                    "INSERT INTO `Avaliacao` (`Id_Venda`, `Titulo`, `descricao`, `Data_Criação`, `Nota`) "
+                    "INSERT INTO `Avaliacao` (`Id_Venda`, `Titulo`, `descricao`, `Data_Criacao`, `Nota`) "
                             + "VALUES (?, ?, ?, ?, ?);",
                     Statement.RETURN_GENERATED_KEYS
             );
@@ -66,7 +66,7 @@ public class AvaliacaoDAO implements IOperacoesGenericasDAO<Integer, Avaliacao> 
             statement = _connection.prepareStatement(
                     "UPDATE `Avaliacao` " +
                             "SET `Id_Venda` = ?, `Titulo` = ?, `descricao` = ?, `Nota` = ? " +
-                            "WHERE `Id_avaliacao` = ?;"
+                            "WHERE `Id` = ?;"
             );
 
             statement.setInt(1, objeto.getIdVenda());
@@ -102,10 +102,10 @@ public class AvaliacaoDAO implements IOperacoesGenericasDAO<Integer, Avaliacao> 
 
             while (resultSet.next()) {
                 int idVenda = resultSet.getInt("Id_Venda");
-                int idAvaliacao = resultSet.getInt("Id_avaliacao");
+                int idAvaliacao = resultSet.getInt("Id");
                 String titulo = resultSet.getString("Titulo");
                 String descricao = resultSet.getString("descricao");
-                java.util.Date dataCriacao = resultSet.getDate("Data_Criação");
+                java.util.Date dataCriacao = resultSet.getDate("Data_Criacao");
                 float nota = resultSet.getFloat("Nota");
 
                 Avaliacao objeto = new Avaliacao(
@@ -136,7 +136,7 @@ public class AvaliacaoDAO implements IOperacoesGenericasDAO<Integer, Avaliacao> 
         try {
             statement = _connection.prepareStatement(
                     "SELECT * FROM `Avaliacao` " +
-                            "WHERE `Id_avaliacao` = ?;"
+                            "WHERE `Id` = ?;"
             );
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
@@ -145,10 +145,10 @@ public class AvaliacaoDAO implements IOperacoesGenericasDAO<Integer, Avaliacao> 
 
             if (resultSet.next()) {
                 int idVenda = resultSet.getInt("Id_Venda");
-                int idAvaliacao = resultSet.getInt("Id_avaliacao");
+                int idAvaliacao = resultSet.getInt("Id");
                 String titulo = resultSet.getString("Titulo");
                 String descricao = resultSet.getString("descricao");
-                java.util.Date dataCriacao = resultSet.getDate("Data_Criação");
+                java.util.Date dataCriacao = resultSet.getDate("Data_Criacao");
                 float nota = resultSet.getFloat("Nota");
 
                 objeto = new Avaliacao(
@@ -188,10 +188,10 @@ public class AvaliacaoDAO implements IOperacoesGenericasDAO<Integer, Avaliacao> 
 
             if (resultSet.next()) {
                 int idVendaResultado = resultSet.getInt("Id_Venda");
-                int idAvaliacao = resultSet.getInt("Id_avaliacao");
+                int idAvaliacao = resultSet.getInt("Id");
                 String titulo = resultSet.getString("Titulo");
                 String descricao = resultSet.getString("descricao");
-                java.util.Date dataCriacao = resultSet.getDate("Data_Criação");
+                java.util.Date dataCriacao = resultSet.getDate("Data_Criacao");
                 float nota = resultSet.getFloat("Nota");
 
                 objeto = new Avaliacao(
@@ -220,7 +220,7 @@ public class AvaliacaoDAO implements IOperacoesGenericasDAO<Integer, Avaliacao> 
 
         try {
             statement = _connection.prepareStatement(
-                    "DELETE FROM `Avaliacao` WHERE `Id_avaliacao` = ?;"
+                    "DELETE FROM `Avaliacao` WHERE `Id` = ?;"
             );
             statement.setInt(1, id);
 

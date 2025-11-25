@@ -148,7 +148,9 @@ public class VendaDAO {
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
 
-            Venda objeto = new Venda();
+            Venda objeto = null;
+
+            objeto = new Venda();
 
             if (resultSet.next()) {
 

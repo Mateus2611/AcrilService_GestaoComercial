@@ -80,4 +80,16 @@ public class Avaliacao {
     public void setIdVenda(Integer idVenda) {
         IdVenda = idVenda;
     }
+
+    @Override
+    public String toString() {
+        return "Avaliacao{" +
+                "Id=" + Id +
+                ", IdVenda=" + IdVenda +
+                ", Titulo='" + Titulo + '\'' +
+                ", Descricao='" + Descricao + '\'' +
+                ", DataCriacao=" + DataCriacao +
+                ", Nota=" + Nota +
+                '}';
+    }
 }
