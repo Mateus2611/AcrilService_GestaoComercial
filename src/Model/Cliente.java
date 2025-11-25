@@ -123,17 +123,15 @@ public class Cliente {
 
     @Override
     public String toString() {
-        return "\nCliente {" +
-                "\nId: " + Id +
+        return "\nId: " + Id +
                 ", \nNome: '" + Nome + '\'' +
-                ", \nEmails: \n" + Emails.toString() +
+                ", \n" + Emails.toString() +
                 ", \nIdEndereco: " + IdEndereco +
-                ", \nEndereco: \n" + Endereco.toString() +
+                ", \n" + Endereco.toString() +
                 ", \nDataCadastro: " + DataCadastro +
                 ", \nDataInativacao: " + DataInativacao +
                 ", \nTipo: " + Tipo +
-                ", \nStatus: " + Status +
-                '}';
+                ", \nStatus: " + Status;
     }
 
     public enum TipoCliente {

@@ -4,6 +4,7 @@ import DAO.JDBC.ConexaoDb;
 import Model.Orcamento;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,7 @@ public class OrcamentoDAO {
         _connection = connection;
     }
 
-    public Orcamento Criar(Orcamento objeto) {
+    public Orcamento Criar(Orcamento objeto, Integer validade) {
         PreparedStatement statement = null;
 
         try {
@@ -27,8 +28,8 @@ public class OrcamentoDAO {
             );
 
             statement.setInt(1, objeto.getIdCliente());
-            statement.setDate(2, (Date) objeto.getDataCriacao());
-            statement.setDate(3, (Date) objeto.getDataValidade());
+            statement.setDate(2, Date.valueOf(LocalDate.now()));
+            statement.setDate(3, Date.valueOf(LocalDate.now().plusDays(validade)));
             statement.setBigDecimal(4, objeto.getValor());
             statement.setBigDecimal(5, objeto.getDesconto());
             statement.setString(6, objeto.getStatus().name());

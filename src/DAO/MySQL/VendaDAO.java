@@ -5,6 +5,7 @@ import Model.Orcamento;
 import Model.Venda;
 
 import java.sql.*;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -18,29 +19,22 @@ public class VendaDAO {
         _connection = connection;
     }
 
-    public Venda Criar(Venda objeto) {
+    public Venda Criar(Venda objeto, Integer prazo) {
         PreparedStatement statement = null;
-        LocalDate localDate = LocalDate.now();
-        Date currentDate = (Date) Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());;
+        objeto.setDataCriacao(Date.valueOf(LocalDate.now()));
+        objeto.setPrazoPagamento(Date.valueOf(LocalDate.now().plusDays(prazo)));
 
         try {
             statement = _connection.prepareStatement(
                     "INSERT INTO `Venda` (`Id_Orcamento`, `Data_Criacao`, "
-                            + "`Status_Pagamento`, `Prazo_Pagamento`, `Data_Conclusao`) "
-                            + "VALUES ( ?, ?, ?, ?, ?);",
+                            + "`Status_Pagamento`, `Prazo_Pagamento`) "
+                            + "VALUES ( ?, ?, 'PENDENTE', ?);",
                     Statement.RETURN_GENERATED_KEYS
             );
 
             statement.setInt(1, objeto.getIdOrcamento());
-            statement.setDate(2, currentDate);
-            statement.setString(3, objeto.getStatusPagamento().name());
-            statement.setDate(4, new java.sql.Date(objeto.getPrazoPagamento().getTime()));
-
-            if (objeto.getDataConclusao() != null) {
-                statement.setDate(5, new java.sql.Date(objeto.getDataConclusao().getDate()));
-            } else {
-                statement.setNull(5, java.sql.Types.DATE);
-            }
+            statement.setDate(2, objeto.getDataCriacao());
+            statement.setDate(3, objeto.getPrazoPagamento());
 
             int rowsAffected = statement.executeUpdate();
 
@@ -52,28 +46,33 @@ public class VendaDAO {
             if (resultSet.next())
                 objeto.setId(resultSet.getInt(1));
 
+            objeto = BuscaId(objeto.getId());
+
             ConexaoDb.closeResultSet(resultSet);
+
+            return objeto;
 
         } catch (SQLException e) {
             throw new RuntimeException(e.getMessage());
         } finally {
             ConexaoDb.closeStatement(statement);
         }
-        return objeto;
     }
 
-    public boolean AtualizarStatusPagamento(Integer id, Enum<Venda.StatusPagamento> statusPagamaneto) {
+    public boolean AtualizarStatusPagamento(Integer id, String statusPagamaneto) {
         PreparedStatement statement = null;
 
         try {
             statement = _connection.prepareStatement(
                     "UPDATE `Venda` " +
-                            "SET `Status_Pagamento` = ? " +
-                            "WHERE `Id_Venda` = ?;"
+                            "SET `Status_Pagamento` = ?, `Data_Conclusao` = ? " +
+                            "WHERE `Id` = ?;"
             );
 
-            statement.setString(1, statusPagamaneto.name());
-            statement.setInt(2, id);
+            statement.setString(1, statusPagamaneto);
+            statement.setDate(2, (statusPagamaneto.equalsIgnoreCase("APROVADO") ?
+                    Date.valueOf(LocalDate.now()) : null));
+            statement.setInt(3, id);
 
             int rowsAffected = statement.executeUpdate();
 
@@ -110,21 +109,21 @@ public class VendaDAO {
                     }
                 }
 
-                Integer idOrcamento = resultSet.getInt("Id_Orcamento");
-                java.util.Date dataCriacao = resultSet.getDate("Data_Criacao");
-                java.util.Date prazoPagamento = resultSet.getDate("Prazo_Pagamento");
-                java.util.Date dataConclusao = resultSet.getDate("Data_Conclusao");
+                int id = resultSet.getInt("Id");
+                int idOrcamento = resultSet.getInt("Id_Orcamento");
+                Date dataCriacao = resultSet.getDate("Data_Criacao");
+                Date prazoPagamento = resultSet.getDate("Prazo_Pagamento");
+                Date dataConclusao = resultSet.getDate("Data_Conclusao");
 
-                Venda objeto = new Venda(
-                        idOrcamento,
-                        dataCriacao,
-                        prazoPagamento,
-                        dataConclusao,
-                        status
-                );
-
-                objeto.setId(resultSet.getInt("Id_Venda"));
-                vendas.add(objeto);
+                vendas.add(new Venda
+                (
+                    id,
+                    idOrcamento,
+                    dataCriacao,
+                    prazoPagamento,
+                    dataConclusao,
+                    status
+                ));
             }
 
             ConexaoDb.closeResultSet(resultSet);
@@ -144,12 +143,12 @@ public class VendaDAO {
         try {
             statement = _connection.prepareStatement(
                     "SELECT * FROM `Venda` " +
-                            "WHERE `Id_Venda` = ?;"
+                            "WHERE `Id` = ?;"
             );
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
 
-            Venda objeto = null;
+            Venda objeto = new Venda();
 
             if (resultSet.next()) {
 
@@ -164,20 +163,20 @@ public class VendaDAO {
                     }
                 }
 
+                id = resultSet.getInt("Id");
                 int idOrcamento = resultSet.getInt("Id_Orcamento");
-                java.util.Date dataCriacao = resultSet.getDate("Data_Criacao");
-                java.util.Date prazoPagamento = resultSet.getDate("Prazo_Pagamento");
-                java.util.Date dataConclusao = resultSet.getDate("Data_Conclusao");
+                Date dataCriacao = resultSet.getDate("Data_Criacao");
+                Date prazoPagamento = resultSet.getDate("Prazo_Pagamento");
+                Date dataConclusao = resultSet.getDate("Data_Conclusao");
 
                 objeto = new Venda(
+                        id,
                         idOrcamento,
                         dataCriacao,
                         prazoPagamento,
                         dataConclusao,
                         status
                 );
-
-                objeto.setId(resultSet.getInt("Id_Venda"));
             }
 
             ConexaoDb.closeResultSet(resultSet);

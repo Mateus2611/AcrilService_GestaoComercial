@@ -32,6 +32,13 @@ public class Orcamento {
         Desconto = desconto;
     }
 
+    public Orcamento(Integer idCliente, BigDecimal valor, StatusOrcamento status, BigDecimal desconto) {
+        IdCliente = idCliente;
+        Valor = valor;
+        Status = status;
+        Desconto = desconto;
+    }
+
     SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 
     private Integer Id;
@@ -134,8 +141,8 @@ public class Orcamento {
 
         return "Orcamento: " +
                 "\nId = " + Id +
-                "\nCliente = " + nomeCliente +
                 "\nIdCliente = " + IdCliente +
+                "\nCliente = " + nomeCliente +
                 "\nProdutos = " + produtos +
                 "\nDataCriacao = " + format.format(DataCriacao) +
                 "\nDataValidade = " + format.format(DataValidade) +

@@ -88,6 +88,6 @@ public class Endereco {
                 ", \nEstado: " + Estado + '\'' +
                 ", \nCidade: " + Cidade + '\'' +
                 ", \nLogradouro: " + Logradouro + '\'' +
-                "\n}";
+                "\n}\n";
     }
 }

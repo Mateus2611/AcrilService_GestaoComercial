@@ -73,47 +73,34 @@ public class OrcamentoView {
 
     private void CriarOrcamento() {
 
+        char validacao;
         int idCliente;
-        Date dataCriacao;
-        Date dataValidade;
-        BigDecimal valor;
         BigDecimal desconto;
 
-        while (true) {
-            try {
-                System.out.println("Informe o ID do Cliente");
-                idCliente = Integer.parseInt(sc.nextLine());
-                System.out.println(idCliente);
+        try {
+            System.out.println("Informe o ID do Cliente");
+            idCliente = Integer.parseInt(sc.nextLine());
+            System.out.println(idCliente);
 
-                System.out.println("Informe a data de criação do orçamento");
-                SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-                String dataString = sc.nextLine();
-                dataCriacao = new Date(format.parse(dataString).getTime());
+            System.out.println("Informe em DIAS a data de validade do orçamento: ");
+            int validade = sc.nextInt();
+            sc.nextLine();
 
-                System.out.println("Informe a data de validade do orçamento");
-                SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
-                String dataString2 = sc.nextLine();
+            System.out.println("Informe o desconto aplicado em cima do valor");
+            String descontoString = sc.nextLine();
 
-                if (dataString2.isEmpty()) {
-                    dataValidade = null;
-                } else {
-                    dataValidade = new Date(format2.parse(dataString2).getTime());
-                }
+            if (descontoString.isEmpty()) {
+                desconto = BigDecimal.ZERO;
+            } else {
+                desconto = new BigDecimal(descontoString);
+            }
 
-                System.out.println("Informe o desconto aplicado em cima do valor");
-                String descontoString = sc.nextLine();
+            Orcamento.StatusOrcamento status = Orcamento.StatusOrcamento.PENDENTE;
+            Orcamento orcamento = new Orcamento(idCliente, BigDecimal.ZERO, status, desconto);
 
-                if (descontoString.isEmpty()) {
-                    desconto = BigDecimal.ZERO;
-                } else {
-                    desconto = new BigDecimal(descontoString);
-                }
+            Orcamento orcamentoNovo = orcamentoService.Criar(orcamento, validade);
 
-                Orcamento.StatusOrcamento status = Orcamento.StatusOrcamento.PENDENTE;
-                Orcamento orcamento = new Orcamento(idCliente, dataCriacao, dataValidade, BigDecimal.ZERO, status, desconto);
-
-                orcamento = orcamentoService.Criar(orcamento);
-
+            do {
                 System.out.println("Informe o ID do produto");
                 int produtoId = Integer.parseInt(sc.nextLine());
                 System.out.println(produtoId);
@@ -131,17 +118,23 @@ public class OrcamentoView {
                         OrcamentoProduto orcamentoProduto = new OrcamentoProduto(orcamento.getId(), produtoId, quantidade);
                         orcamentoProdutoService.Criar(orcamentoProduto);
                         System.out.println("Orçamento adicionado com sucesso!");
-                        break;
                     } catch (RuntimeException e) {
                         System.out.println("Erro ao adicionar produto ao orçamento");
                     }
                 }
-            } catch (NumberFormatException e) {
-                System.out.println("Entrada inválida");
-            } catch (ParseException e) {
-                System.out.println("Formato de data inválido, utilize o seguinte formato: Dia/Mês/Ano");
-            }
+
+                System.out.println("Deseja adicionar mais produtos? (S/N)");
+                validacao = sc.next().toUpperCase().charAt(0);
+                sc.nextLine();
+
+            } while (validacao != 'N');
+
+            System.out.println(orcamentoService.BuscaPorId(orcamentoNovo.getId()));
+
+        } catch (NumberFormatException e) {
+            System.out.println("Entrada inválida");
         }
+
     }
 
     private void BuscaGeral() {

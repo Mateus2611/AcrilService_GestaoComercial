@@ -28,12 +28,12 @@ public class OrcamentoService {
         _produtoDao = produtoDao;
     }
 
-    public Orcamento Criar(Orcamento objeto) {
+    public Orcamento Criar(Orcamento objeto, Integer validade) {
         if (objeto == null)
             throw new RuntimeException("Objeto vazio. Preencha as informações");
 
         try {
-            return _orcamentoDao.Criar(objeto);
+            return _orcamentoDao.Criar(objeto, validade);
         } catch (RuntimeException e) {
             throw new RuntimeException(e.getMessage());
         }
