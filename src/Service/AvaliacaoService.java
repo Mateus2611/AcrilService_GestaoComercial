@@ -35,12 +35,7 @@ public class AvaliacaoService {
                     throw new RuntimeException("Erro: A Venda informada não existe.");
                 }
 
-                // Opcional: Validar se a venda já está concluída/aprovada antes de avaliar
-                /*
-                if (venda.getStatusPagamento() != Venda.StatusPagamento.APROVADO) {
-                    throw new RuntimeException("Erro: Só é possível avaliar vendas aprovadas.");
-                }
-                */
+
             } else {
                 throw new RuntimeException("Erro: É necessário vincular um ID de Venda para criar uma avaliação.");
             }
