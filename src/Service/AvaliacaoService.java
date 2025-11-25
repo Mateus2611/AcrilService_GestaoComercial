@@ -35,7 +35,6 @@ public class AvaliacaoService {
                     throw new RuntimeException("Erro: A Venda informada não existe.");
                 }
 
-
             } else {
                 throw new RuntimeException("Erro: É necessário vincular um ID de Venda para criar uma avaliação.");
             }
