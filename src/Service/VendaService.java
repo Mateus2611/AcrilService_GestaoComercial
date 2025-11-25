@@ -18,15 +18,11 @@ public class VendaService {
         _orcamentoDao = orcamentoDao;
     }
 
-    public Venda Criar(Integer idOrcamento, Integer prazo) {
+    public Venda Criar(Orcamento orcamento, Integer prazo) {
         Venda objeto = new Venda();
+        objeto.setIdOrcamento(orcamento.getId());
 
         try {
-            Orcamento orcamento = _orcamentoDao.BuscaId(idOrcamento);
-            objeto.setIdOrcamento(idOrcamento);
-            if (orcamento == null) {
-                throw new RuntimeException("Erro: O Orçamento informado não existe.");
-            }
             objeto = _vendaDao.Criar(objeto, prazo);
             objeto.setOrcamento(orcamento);
 

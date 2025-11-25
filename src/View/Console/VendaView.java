@@ -2,8 +2,10 @@ package View.Console;
 
 import DAO.JDBC.ConexaoDb;
 import DAO.MySQL.*;
+import Model.Orcamento;
 import Model.Venda;
 import Service.ClienteService;
+import Service.OrcamentoService;
 import Service.VendaService;
 
 import java.sql.Connection;
@@ -23,9 +25,13 @@ public class VendaView {
     Connection _conn = ConexaoDb.openConnection();
 
     OrcamentoDAO _orcmaentoDAO = new OrcamentoDAO(_conn);
+    OrcamentoProdutoDAO _orcamentoProdutoDAO = new OrcamentoProdutoDAO(_conn);
+    ProdutoDAO _produtoDAO = new ProdutoDAO(_conn);
+    ClienteDAO _clienteDAO = new ClienteDAO(_conn);
     VendaDAO _vendaDAO = new VendaDAO(_conn);
 
     VendaService _vendaService = new VendaService(_vendaDAO, _orcmaentoDAO);
+    OrcamentoService _orcamentoService = new OrcamentoService(_orcmaentoDAO, _clienteDAO, _orcamentoProdutoDAO, _produtoDAO);
 
     public void SelecionarAcaoVenda() {
 
@@ -55,15 +61,25 @@ public class VendaView {
         int idOrcamento = sc.nextInt();
         sc.nextLine();
 
+        Orcamento orcamento = _orcamentoService.BuscaPorId(idOrcamento);
+
+        if (orcamento == null)
+            throw new RuntimeException("Não existe orçamento com o ID informado.");
+
         System.out.println("Informe o prazo em dias para realizar o pagamento: ");
         int prazo = sc.nextInt();
         sc.nextLine();
 
-        System.out.println(_vendaService.Criar(idOrcamento, prazo).toString());
+        System.out.println(_vendaService.Criar(orcamento, prazo).toString());
     }
 
     public void BuscaGeral() {
         List<Venda> vendas = _vendaService.BuscaGeral();
+
+        for (Venda venda : vendas) {
+            Orcamento orcamento = _orcamentoService.BuscaPorId(venda.getIdOrcamento());
+            venda.setOrcamento(orcamento);
+        }
 
         System.out.println(vendas.toString());
     }
@@ -73,7 +89,12 @@ public class VendaView {
         int id = sc.nextInt();
         sc.nextLine();
 
-        System.out.println(_vendaService.BuscaPorId(id).toString());
+        Venda venda = _vendaService.BuscaPorId(id);
+
+        Orcamento orcamento = _orcamentoService.BuscaPorId(venda.getIdOrcamento());
+        venda.setOrcamento(orcamento);
+
+        System.out.println(venda.toString());
     }
 
     public void AtualizarStatusPagamento() {
@@ -85,8 +106,9 @@ public class VendaView {
         sc.nextLine();
         String status = sc.nextLine();
 
-        System.out.println(
-                _vendaService.AtualizarStatusPagamento(id, status.toUpperCase()).toString()
-        );
+        Venda venda = _vendaService.AtualizarStatusPagamento(id, status.toUpperCase());
+        venda.setOrcamento(_orcamentoService.BuscaPorId(venda.getIdOrcamento()));
+
+        System.out.println(venda.toString());
     }
 }

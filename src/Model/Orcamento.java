@@ -32,6 +32,13 @@ public class Orcamento {
         Desconto = desconto;
     }
 
+    public Orcamento(Integer idCliente, BigDecimal valor, StatusOrcamento status, BigDecimal desconto) {
+        IdCliente = idCliente;
+        Valor = valor;
+        Status = status;
+        Desconto = desconto;
+    }
+
     SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 
     private Integer Id;
