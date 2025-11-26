@@ -22,13 +22,11 @@ public class AvaliacaoService {
         }
 
         try {
-            // Verifica se o ID foi passado via parâmetro ou se já consta no objeto
             if (idVenda != null) {
                 objeto.setIdVenda(idVenda);
             }
 
             if (objeto.getIdVenda() != null) {
-                // Validação usando o VendaService para garantir que a venda existe
                 Venda venda = _vendaService.BuscaPorId(objeto.getIdVenda());
 
                 if (venda == null || venda.getId() == null || venda.getId() == 0) {
@@ -66,7 +64,6 @@ public class AvaliacaoService {
         }
     }
 
-    // Método útil para buscar a avaliação através do ID da Venda
     public Avaliacao BuscaPorIdVenda(Integer idVenda) {
         try {
             return _avaliacaoDao.buscaPorIdVenda(idVenda);
@@ -87,7 +84,6 @@ public class AvaliacaoService {
                 throw new RuntimeException("Avaliação não encontrada para atualização.");
             }
 
-            // Garante que o ID do objeto a ser atualizado é o mesmo do parâmetro
             objeto.setId(id);
 
             return _avaliacaoDao.Atualizar(id, objeto);

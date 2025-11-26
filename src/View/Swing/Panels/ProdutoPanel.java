@@ -5,7 +5,9 @@ import Service.ProdutoService;
 import View.Swing.Dialogs.ProdutoDialog;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.util.List;
 
@@ -45,6 +47,12 @@ public class ProdutoPanel extends JPanel {
             }
         };
         table = new JTable(tableModel);
+
+        JTableHeader header = table.getTableHeader();
+        header.setFont(header.getFont().deriveFont(Font.BOLD));
+
+        ((DefaultTableCellRenderer) header.getDefaultRenderer()).setHorizontalAlignment(JLabel.LEFT);
+
         add(new JScrollPane(table), BorderLayout.CENTER);
 
         // Actions
