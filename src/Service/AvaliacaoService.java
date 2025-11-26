@@ -31,8 +31,8 @@ public class AvaliacaoService {
                 // Validação usando o VendaService para garantir que a venda existe
                 Venda venda = _vendaService.BuscaPorId(objeto.getIdVenda());
 
-                if (venda == null) {
-                    throw new RuntimeException("Erro: A Venda informada não existe.");
+                if (venda == null || venda.getId() == null || venda.getId() == 0) {
+                    throw new RuntimeException("Erro: A Venda informada (ID " + objeto.getIdVenda() + ") não existe.");
                 }
 
             } else {
