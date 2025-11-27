@@ -38,16 +38,18 @@ public class ClienteDialog extends JDialog {
 
         JPanel pnlDados = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        gbc.gridx = 0; gbc.gridy = 0;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
         pnlDados.add(new JLabel("Nome Completo:"), gbc);
         txtNome = new JTextField(20);
         gbc.gridx = 1;
         pnlDados.add(txtNome, gbc);
 
-        gbc.gridx = 0; gbc.gridy = 1;
+        gbc.gridx = 0;
+        gbc.gridy = 1;
         pnlDados.add(new JLabel("Tipo (CPF/CNPJ):"), gbc);
         cbTipo = new JComboBox<>(Cliente.TipoCliente.values());
         gbc.gridx = 1;
@@ -57,31 +59,37 @@ public class ClienteDialog extends JDialog {
 
         JPanel pnlEndereco = new JPanel(new GridBagLayout());
 
-        gbc.gridx = 0; gbc.gridy = 0;
-        pnlEndereco.add(new JLabel("CEP:"), gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        pnlEndereco.add(new JLabel("CEP (apenas números):"), gbc);
         txtCep = new JTextField(10);
+
         gbc.gridx = 1;
         pnlEndereco.add(txtCep, gbc);
 
-        gbc.gridx = 0; gbc.gridy = 1;
+        gbc.gridx = 0;
+        gbc.gridy = 1;
         pnlEndereco.add(new JLabel("Logradouro:"), gbc);
         txtLogradouro = new JTextField(20);
         gbc.gridx = 1;
         pnlEndereco.add(txtLogradouro, gbc);
 
-        gbc.gridx = 0; gbc.gridy = 2;
+        gbc.gridx = 0;
+        gbc.gridy = 2;
         pnlEndereco.add(new JLabel("Bairro:"), gbc);
         txtBairro = new JTextField(15);
         gbc.gridx = 1;
         pnlEndereco.add(txtBairro, gbc);
 
-        gbc.gridx = 0; gbc.gridy = 3;
+        gbc.gridx = 0;
+        gbc.gridy = 3;
         pnlEndereco.add(new JLabel("Cidade:"), gbc);
         txtCidade = new JTextField(15);
         gbc.gridx = 1;
         pnlEndereco.add(txtCidade, gbc);
 
-        gbc.gridx = 0; gbc.gridy = 4;
+        gbc.gridx = 0;
+        gbc.gridy = 4;
         pnlEndereco.add(new JLabel("Estado (UF):"), gbc);
         txtEstado = new JTextField(5);
         gbc.gridx = 1;
@@ -131,7 +139,7 @@ public class ClienteDialog extends JDialog {
 
         btnAddEmail.addActionListener(e -> {
             String mail = txtNewEmail.getText().trim();
-            if (!mail.isEmpty()) {
+            if (mail.contains("@")) {
                 emailListModel.addElement(new Email(mail));
                 txtNewEmail.setText("");
             }
@@ -172,8 +180,10 @@ public class ClienteDialog extends JDialog {
     }
 
     private void saveData() {
+
+        if (!cepValidate()) return;
+
         try {
-            // 1. Gather Address Data
             Endereco endereco = new Endereco(
                     txtCep.getText(),
                     txtBairro.getText(),
@@ -182,7 +192,7 @@ public class ClienteDialog extends JDialog {
                     txtLogradouro.getText()
             );
 
-            // 2. Gather Email Data
+            //Email
             List<Email> emailList = new ArrayList<>();
             for (int i = 0; i < emailListModel.size(); i++) {
                 emailList.add(emailListModel.get(i));
@@ -190,7 +200,7 @@ public class ClienteDialog extends JDialog {
 
             if (cliente == null) {
                 Cliente newCliente = new Cliente((Cliente.TipoCliente) cbTipo.getSelectedItem(), txtNome.getText());
-                service.Criar(newCliente, endereco, emailList); //
+                service.Criar(newCliente, endereco, emailList);
             } else {
 
                 if (!cliente.getNome().equals(txtNome.getText())) {
@@ -200,7 +210,7 @@ public class ClienteDialog extends JDialog {
                     service.AtualizarTipoCliente(cliente.getId(), ((Cliente.TipoCliente) cbTipo.getSelectedItem()).name());
                 }
 
-                service.AtualizarEnderecoCliente(cliente.getId(), endereco); //
+                service.AtualizarEnderecoCliente(cliente.getId(), endereco);
 
                 List<Email> toAdd = new ArrayList<>();
                 List<Integer> currentIds = new ArrayList<>();
@@ -217,7 +227,7 @@ public class ClienteDialog extends JDialog {
                     service.CriarEmailCliente(cliente.getId(), toAdd);
                 }
 
-                // 2. Identify removed emails (In old list but not in current list)
+                //Emails removidos
                 for (Email oldEmail : cliente.getEmails()) {
                     if (!currentIds.contains(oldEmail.getId())) {
                         service.ExcluirEmailCliente(oldEmail.getId()); //
@@ -237,5 +247,13 @@ public class ClienteDialog extends JDialog {
 
     public boolean isSaved() {
         return saved;
+    }
+
+    private boolean cepValidate() {
+        if (txtCep.getText().length() != 8) {
+            JOptionPane.showMessageDialog(this, "CEP inválido");
+            return false;
+        }
+        return true;
     }
 }

@@ -26,24 +26,23 @@ public class ProdutoDialog extends JDialog {
         setLocationRelativeTo(parent);
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Nome
+        //Nome
         gbc.gridx = 0; gbc.gridy = 0;
         add(new JLabel("Nome:"), gbc);
         txtNome = new JTextField(20);
         gbc.gridx = 1;
         add(txtNome, gbc);
 
-        // Valor
+        //Valor
         gbc.gridx = 0; gbc.gridy = 1;
         add(new JLabel("Valor (R$):"), gbc);
         txtValor = new JTextField(20);
         gbc.gridx = 1;
         add(txtValor, gbc);
 
-        // Buttons
         JPanel panelBtn = new JPanel();
         JButton btnSave = new JButton("Salvar");
         JButton btnCancel = new JButton("Cancelar");
@@ -53,13 +52,11 @@ public class ProdutoDialog extends JDialog {
         gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 2;
         add(panelBtn, gbc);
 
-        // Load Data if Editing
         if (produto != null) {
             txtNome.setText(produto.getNome());
             txtValor.setText(produto.getValor().toString());
         }
 
-        // Actions
         btnSave.addActionListener(e -> save());
         btnCancel.addActionListener(e -> dispose());
     }
@@ -70,14 +67,14 @@ public class ProdutoDialog extends JDialog {
             BigDecimal valor = new BigDecimal(txtValor.getText().replace(",", "."));
 
             if (produto == null) {
-                // Create
+                //Criar
                 Produto novo = new Produto(nome, valor);
-                service.Criar(novo); //
+                service.Criar(novo);
             } else {
-                // Update
+                //Atualizar
                 produto.setNome(nome);
                 produto.setValor(valor);
-                service.Atualizar(produto.getId(), produto); //
+                service.Atualizar(produto.getId(), produto);
             }
             saved = true;
             dispose();

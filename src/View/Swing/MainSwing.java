@@ -17,7 +17,6 @@ public class MainSwing {
             System.err.println("Falha ao inciar LaF");
         }
 
-        // Initialize Database and Services
         try {
             Connection conn = ConexaoDb.openConnection(); //
 
@@ -30,7 +29,7 @@ public class MainSwing {
             OrcamentoProdutoDAO orcamentoProdutoDAO = new OrcamentoProdutoDAO(conn);
             AvaliacaoDAO avaliacaoDAO = new AvaliacaoDAO(conn);
 
-            // Services
+            //Services
             ProdutoService produtoService = new ProdutoService(produtoDAO);
             ClienteService clienteService = new ClienteService(clienteDAO, enderecoDAO, emailDAO);
             OrcamentoService orcamentoService = new OrcamentoService(orcamentoDAO, clienteDAO, orcamentoProdutoDAO, produtoDAO);

@@ -1,7 +1,6 @@
 package View.Swing;
 
 import Service.*;
-//import View.Swing.Panels.ClientePanel;
 import View.Swing.Panels.*;
 
 import javax.swing.*;
@@ -12,13 +11,13 @@ public class MainFrame extends JFrame {
     public MainFrame(ProdutoService produtoService, ClienteService clienteService, OrcamentoService orcamentoService,
                      OrcamentoProdutoService orcamentoProdutoService, VendaService vendaService, AvaliacaoService avaliacaoService) {
         setTitle("AcrilService - Gestão Comercial");
-        setSize(1024, 768);
+        setSize(1024, 560);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        // Placeholders for future modules
+        //Módulos
         tabbedPane.addTab("Vendas", new VendaPanel(vendaService, orcamentoService));
         tabbedPane.addTab("Orçamentos", new OrcamentoPanel
                 (orcamentoService, orcamentoProdutoService, clienteService, produtoService));

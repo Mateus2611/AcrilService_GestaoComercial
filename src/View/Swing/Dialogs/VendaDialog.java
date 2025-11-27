@@ -13,13 +13,12 @@ public class VendaDialog extends JDialog {
 
     private final VendaService vendaService;
     private final OrcamentoService orcamentoService;
-    private Venda venda; // Null if creating new
+    private Venda venda;
 
-    // Fields
     private JTextField txtIdOrcamento;
-    private JTextField txtPrazo; // Only for creation
-    private JComboBox<Venda.StatusPagamento> cbStatus; // Only for update
-    private JLabel lblOrcamentoInfo; // To show budget details
+    private JTextField txtPrazo;
+    private JComboBox<Venda.StatusPagamento> cbStatus;
+    private JLabel lblOrcamentoInfo;
 
     public VendaDialog(Frame parent, VendaService vendaService, OrcamentoService orcamentoService, Venda venda) {
         super(parent, venda == null ? "Nova Venda" : "Gerenciar Venda", true);
@@ -32,13 +31,10 @@ public class VendaDialog extends JDialog {
         setLayout(new GridBagLayout());
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(8, 8, 8, 8);
+        gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // --- Components ---
-
         if (venda == null) {
-            // --- CREATION MODE ---
             gbc.gridx = 0; gbc.gridy = 0;
             add(new JLabel("ID do Orçamento:"), gbc);
             txtIdOrcamento = new JTextField(10);
@@ -58,7 +54,6 @@ public class VendaDialog extends JDialog {
             btnVerificar.addActionListener(e -> verificarOrcamento());
 
         } else {
-            // --- EDIT MODE ---
             gbc.gridx = 0; gbc.gridy = 0;
             add(new JLabel("ID Venda: " + venda.getId()), gbc);
 
@@ -76,13 +71,11 @@ public class VendaDialog extends JDialog {
             add(cbStatus, gbc);
         }
 
-        // Info Label area
         lblOrcamentoInfo = new JLabel(" ");
         lblOrcamentoInfo.setForeground(Color.BLUE);
         gbc.gridx = 0; gbc.gridy = 4; gbc.gridwidth = 2;
         add(lblOrcamentoInfo, gbc);
 
-        // Buttons
         JPanel pnlBtn = new JPanel();
         JButton btnSave = new JButton(venda == null ? "Nova Venda" : "Atualizar Status");
         JButton btnCancel = new JButton("Fechar");
@@ -92,7 +85,6 @@ public class VendaDialog extends JDialog {
         gbc.gridx = 0; gbc.gridy = 5; gbc.gridwidth = 2;
         add(pnlBtn, gbc);
 
-        // --- Actions ---
         btnSave.addActionListener(e -> save());
         btnCancel.addActionListener(e -> dispose());
     }
@@ -102,7 +94,8 @@ public class VendaDialog extends JDialog {
             int id = Integer.parseInt(txtIdOrcamento.getText());
             Orcamento o = orcamentoService.BuscaPorId(id); //
             if (o != null) {
-                lblOrcamentoInfo.setText("<html>Cliente: " + o.getNomeCliente() + "<br>Valor: R$ " + o.getValor() + "<br>Status: " + o.getStatus() + "<br>Validade: " + o.getDataValidade() + "</html>");
+                lblOrcamentoInfo.setText("<html>Cliente: " + o.getNomeCliente() + "<br>Valor: R$ " + o.getValor() +
+                        "<br>Status: " + o.getStatus() + "<br>Validade: " + o.getDataValidade() + "</html>");
             } else {
                 lblOrcamentoInfo.setText("Orçamento não encontrado.");
             }
@@ -116,7 +109,6 @@ public class VendaDialog extends JDialog {
     private void save() {
         try {
             if (venda == null) {
-                // Create Logic
                 int idOrcamento = Integer.parseInt(txtIdOrcamento.getText());
                 int prazo = Integer.parseInt(txtPrazo.getText());
 
@@ -130,7 +122,6 @@ public class VendaDialog extends JDialog {
                 JOptionPane.showMessageDialog(this, "Venda gerada com sucesso!");
 
             } else {
-                // Update Logic
                 Venda.StatusPagamento newStatus = (Venda.StatusPagamento) cbStatus.getSelectedItem();
                 vendaService.AtualizarStatusPagamento(venda.getId(), newStatus.name()); //
                 JOptionPane.showMessageDialog(this, "Status atualizado!");
