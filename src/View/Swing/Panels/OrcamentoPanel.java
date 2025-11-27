@@ -12,6 +12,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -35,7 +37,6 @@ public class OrcamentoPanel extends JPanel {
 
         setLayout(new BorderLayout());
 
-        // --- Toolbar ---
         JToolBar toolBar = new JToolBar();
         toolBar.setFloatable(false);
 
@@ -49,13 +50,24 @@ public class OrcamentoPanel extends JPanel {
         toolBar.add(btnRefresh);
         add(toolBar, BorderLayout.NORTH);
 
-        // --- Table ---
+        //Colunas
         String[] columns = {"ID", "Cliente", "Data Criação", "Validade", "Status", "Valor Total"};
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) { return false; }
         };
         table = new JTable(tableModel);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        table.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    Orcamento o  = getSelectedOrcamento();
+                    if (o != null) openDialog(o);
+                }
+            }
+        });
 
         JTableHeader header = table.getTableHeader();
         header.setFont(header.getFont().deriveFont(Font.BOLD));
@@ -64,7 +76,6 @@ public class OrcamentoPanel extends JPanel {
 
         add(new JScrollPane(table), BorderLayout.CENTER);
 
-        // --- Actions ---
         btnAdd.addActionListener(e -> openDialog(null));
 
         btnDetails.addActionListener(e -> {
@@ -74,14 +85,12 @@ public class OrcamentoPanel extends JPanel {
 
         btnRefresh.addActionListener(e -> loadData());
 
-        // Initial Load
         loadData();
     }
 
     private void loadData() {
         tableModel.setRowCount(0);
         try {
-            // Fetch all budgets. Your Service logic already populates Client Name and calculates Total Value.
             List<Orcamento> lista = orcamentoService.BuscaGeral(); //
 
             for (Orcamento o : lista) {
@@ -103,8 +112,7 @@ public class OrcamentoPanel extends JPanel {
         int row = table.getSelectedRow();
         if (row != -1) {
             Integer id = (Integer) tableModel.getValueAt(row, 0);
-            // Fetch full object by ID to ensure we have all details
-            return orcamentoService.BuscaPorId(id); //
+            return orcamentoService.BuscaPorId(id);
         }
         JOptionPane.showMessageDialog(this, "Selecione um orçamento.");
         return null;
@@ -117,6 +125,6 @@ public class OrcamentoPanel extends JPanel {
                 orcamento
         );
         dialog.setVisible(true);
-        loadData(); // Refresh table after dialog closes
+        loadData();
     }
 }

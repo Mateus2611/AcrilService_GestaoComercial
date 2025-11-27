@@ -9,6 +9,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 public class ProdutoPanel extends JPanel {
@@ -21,7 +23,6 @@ public class ProdutoPanel extends JPanel {
         this.produtoService = service;
         setLayout(new BorderLayout());
 
-        // Toolbar
         JToolBar toolBar = new JToolBar();
         toolBar.setFloatable(false);
 
@@ -38,15 +39,27 @@ public class ProdutoPanel extends JPanel {
 
         add(toolBar, BorderLayout.NORTH);
 
-        // Table
+        //Colunas
         String[] columns = {"ID", "Nome", "Valor"};
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // Disable direct editing
+                return false;
             }
         };
         table = new JTable(tableModel);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        table.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                int selectedRow = table.getSelectedRow();
+                if (selectedRow != -1 && e.getClickCount() == 2) {
+                    Integer id = (Integer) tableModel.getValueAt(selectedRow, 0);
+                    Produto p = produtoService.BuscaPorId(id);
+                    openDialog(p);
+                }
+            }
+        });
 
         JTableHeader header = table.getTableHeader();
         header.setFont(header.getFont().deriveFont(Font.BOLD));
@@ -55,14 +68,13 @@ public class ProdutoPanel extends JPanel {
 
         add(new JScrollPane(table), BorderLayout.CENTER);
 
-        // Actions
         btnAdd.addActionListener(e -> openDialog(null));
 
         btnEdit.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow != -1) {
                 Integer id = (Integer) tableModel.getValueAt(selectedRow, 0);
-                Produto p = produtoService.BuscaPorId(id); //
+                Produto p = produtoService.BuscaPorId(id);
                 openDialog(p);
             } else {
                 JOptionPane.showMessageDialog(this, "Selecione um produto para editar.");
@@ -72,7 +84,6 @@ public class ProdutoPanel extends JPanel {
         btnDelete.addActionListener(e -> deleteProduct());
         btnRefresh.addActionListener(e -> loadData());
 
-        // Initial Load
         loadData();
     }
 
@@ -99,7 +110,7 @@ public class ProdutoPanel extends JPanel {
         if (confirm == JOptionPane.YES_OPTION) {
             try {
                 Integer id = (Integer) tableModel.getValueAt(selectedRow, 0);
-                produtoService.Excluir(id); //
+                produtoService.Excluir(id);
                 loadData();
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "Erro ao excluir: " + ex.getMessage());

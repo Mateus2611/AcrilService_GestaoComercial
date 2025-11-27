@@ -9,6 +9,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 public class ClientePanel extends JPanel {
@@ -21,7 +23,6 @@ public class ClientePanel extends JPanel {
         this.clienteService = service;
         setLayout(new BorderLayout());
 
-        // --- Toolbar ---
         JToolBar toolBar = new JToolBar();
         toolBar.setFloatable(false);
 
@@ -38,7 +39,7 @@ public class ClientePanel extends JPanel {
 
         add(toolBar, BorderLayout.NORTH);
 
-        // --- Table ---
+        //Colunas
         String[] columns = {"ID", "Nome", "Tipo", "Localização", "Status"};
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
@@ -47,6 +48,16 @@ public class ClientePanel extends JPanel {
             }
         };
         table = new JTable(tableModel);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        table.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    Cliente c = getSelectedCliente();
+                    if (c != null) openDialog(c);
+                }
+            }
+        });
 
         JTableHeader header = table.getTableHeader();
         header.setFont(header.getFont().deriveFont(Font.BOLD));
@@ -55,7 +66,6 @@ public class ClientePanel extends JPanel {
 
         add(new JScrollPane(table), BorderLayout.CENTER);
 
-        // --- Actions ---
         btnAdd.addActionListener(e -> openDialog(null));
 
         btnEdit.addActionListener(e -> {
@@ -67,19 +77,18 @@ public class ClientePanel extends JPanel {
 
         btnRefresh.addActionListener(e -> loadData(null));
 
-        // Initial Load
         loadData(null);
     }
 
     private void loadData(Integer id) {
         tableModel.setRowCount(0);
         try {
-            // Fetch all clients including embedded Address info
             List<Cliente> clientes = clienteService.BuscaGeral();
             for (Cliente c : clientes) {
                 String localizacao = "N/A";
                 if (c.getEndereco() != null) {
-                    localizacao = c.getEndereco().Logradouro + ", " + c.getEndereco().Bairro + ", " + c.getEndereco().Cidade + " - " + c.getEndereco().Estado + ", " + c.getEndereco().Cep ;
+                    localizacao = c.getEndereco().Logradouro + ", " + c.getEndereco().Bairro + ", " +
+                            c.getEndereco().Cidade + " - " + c.getEndereco().Estado + ", " + c.getEndereco().Cep ;
                 }
 
                 tableModel.addRow(new Object[]{
@@ -99,7 +108,6 @@ public class ClientePanel extends JPanel {
         int selectedRow = table.getSelectedRow();
         if (selectedRow != -1) {
             Integer id = (Integer) tableModel.getValueAt(selectedRow, 0);
-            // Always fetch fresh data from DB to ensure we have Emails and Address loaded
             return clienteService.BuscaPorId(id);
         }
         JOptionPane.showMessageDialog(this, "Selecione um cliente na lista.");
@@ -118,7 +126,8 @@ public class ClientePanel extends JPanel {
 
         try {
             if ("ATIVO".equals(currentStatus)) {
-                if (JOptionPane.showConfirmDialog(this, "Deseja inativar este cliente?", "Confirmar", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                if (JOptionPane.showConfirmDialog(this, "Deseja inativar este cliente?",
+                        "Confirmar", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                     clienteService.InativarCliente(id); //
                 }
             } else {
@@ -137,4 +146,6 @@ public class ClientePanel extends JPanel {
             loadData(null);
         }
     }
+
+
 }

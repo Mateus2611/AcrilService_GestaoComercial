@@ -19,7 +19,7 @@ public class AvaliacaoDialog extends JDialog {
     private JTextField txtIdVenda;
     private JTextField txtTitulo;
     private JTextArea txtDescricao;
-    private JSpinner spnNota; // Using spinner for numeric input
+    private JSpinner spnNota;
 
     public AvaliacaoDialog(Frame parent, AvaliacaoService avaliacaoService, VendaService vendaService, Avaliacao avaliacao) {
         super(parent, avaliacao == null ? "Nova Avaliação" : "Editar Avaliação", true);
@@ -32,7 +32,7 @@ public class AvaliacaoDialog extends JDialog {
         setLayout(new GridBagLayout());
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         // --- ID Venda ---
@@ -42,22 +42,27 @@ public class AvaliacaoDialog extends JDialog {
         gbc.gridx = 1;
         add(txtIdVenda, gbc);
 
-        // --- Título ---
+        //Título
         gbc.gridx = 0; gbc.gridy = 1;
         add(new JLabel("Título:"), gbc);
         txtTitulo = new JTextField(20);
         gbc.gridx = 1;
         add(txtTitulo, gbc);
 
-        // --- Nota ---
+        //Nota
         gbc.gridx = 0; gbc.gridy = 2;
         add(new JLabel("Nota (0-5):"), gbc);
-        // Spinner model: value, min, max, step
-        spnNota = new JSpinner(new SpinnerNumberModel(5.0, 0.0, 5.0, 0.5));
+
+        spnNota = new JSpinner(new SpinnerNumberModel
+                (5.0, 0.0, 5.0, 0.5));
+
+        ((JSpinner.DefaultEditor) spnNota.getEditor()).getTextField().setEditable(false);
+
         gbc.gridx = 1;
+
         add(spnNota, gbc);
 
-        // --- Descrição ---
+        //Descrição
         gbc.gridx = 0; gbc.gridy = 3;
         gbc.anchor = GridBagConstraints.NORTH;
         add(new JLabel("Descrição:"), gbc);
@@ -68,7 +73,7 @@ public class AvaliacaoDialog extends JDialog {
         gbc.gridx = 1; gbc.weighty = 1.0; gbc.fill = GridBagConstraints.BOTH;
         add(scrollDesc, gbc);
 
-        // --- Buttons ---
+        //Buttons
         JPanel pnlBtn = new JPanel();
         JButton btnSave = new JButton("Salvar");
         JButton btnCancel = new JButton("Cancelar");
@@ -78,7 +83,6 @@ public class AvaliacaoDialog extends JDialog {
         gbc.gridx = 0; gbc.gridy = 4; gbc.gridwidth = 2; gbc.weighty = 0; gbc.fill = GridBagConstraints.HORIZONTAL;
         add(pnlBtn, gbc);
 
-        // --- Load Data if Editing ---
         if (avaliacao != null) {
             txtIdVenda.setText(String.valueOf(avaliacao.getIdVenda()));
             txtIdVenda.setEditable(false);
@@ -87,7 +91,6 @@ public class AvaliacaoDialog extends JDialog {
             spnNota.setValue(Double.valueOf(avaliacao.getNota()));
         }
 
-        // --- Actions ---
         btnSave.addActionListener(e -> save());
         btnCancel.addActionListener(e -> dispose());
     }
@@ -99,13 +102,10 @@ public class AvaliacaoDialog extends JDialog {
             String descricao = txtDescricao.getText();
             float nota = ((Double) spnNota.getValue()).floatValue();
 
-            // Basic Validation
             if (titulo.isEmpty()) throw new Exception("O título é obrigatório.");
 
             if (avaliacao == null) {
-                // Create Logic
 
-                // 1. Check if sale exists
                 Venda v = vendaService.BuscaPorId(idVenda);
                 if (v == null || v.getId() == null || v.getId() == 0) {
                     throw new Exception("Venda com ID " + idVenda + " não encontrada.");
@@ -115,11 +115,9 @@ public class AvaliacaoDialog extends JDialog {
                 avaliacaoService.Criar(novo, idVenda); //
 
             } else {
-                // Update Logic
                 avaliacao.setTitulo(titulo);
                 avaliacao.setDescricao(descricao);
                 avaliacao.setNota(nota);
-                // Date is usually kept original or updated depending on rules. Here we keep it.
 
                 avaliacaoService.Atualizar(avaliacao.getId(), avaliacao); //
             }

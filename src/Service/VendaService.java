@@ -20,7 +20,8 @@ public class VendaService {
 
     public Venda Criar(Orcamento orcamento, Integer prazo) {
         if (!orcamento.getStatus().toString().equalsIgnoreCase("APROVADO"))
-            throw new RuntimeException("Não foi possível gerar a venda, o orçamento não foi aprovado. Status atual do orçamento: " + orcamento.getStatus());
+            throw new RuntimeException("Não foi possível gerar a venda, o orçamento não foi aprovado. Status atual do orçamento: "
+                    + orcamento.getStatus());
 
         Venda objeto = new Venda();
         objeto.setIdOrcamento(orcamento.getId());

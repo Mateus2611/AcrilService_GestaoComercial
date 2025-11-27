@@ -10,6 +10,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -27,7 +29,6 @@ public class VendaPanel extends JPanel {
 
         setLayout(new BorderLayout());
 
-        // --- Toolbar ---
         JToolBar toolBar = new JToolBar();
         toolBar.setFloatable(false);
 
@@ -42,7 +43,7 @@ public class VendaPanel extends JPanel {
 
         add(toolBar, BorderLayout.NORTH);
 
-        // --- Table ---
+        //Coluna
         String[] columns = {"ID", "ID Orçamento", "Data Criação", "Prazo Pagamento", "Data Conclusão", "Status"};
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
@@ -52,6 +53,16 @@ public class VendaPanel extends JPanel {
         };
 
         table = new JTable(tableModel);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        table.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    Venda v = getSelectedVenda();
+                    if (v != null) openDialog(v);
+                }
+            }
+        });
 
         JTableHeader header = table.getTableHeader();
         header.setFont(header.getFont().deriveFont(Font.BOLD));
@@ -60,7 +71,6 @@ public class VendaPanel extends JPanel {
 
         add(new JScrollPane(table), BorderLayout.CENTER);
 
-        // --- Actions ---
         btnAdd.addActionListener(e -> openDialog(null));
 
         btnEdit.addActionListener(e -> {
@@ -70,14 +80,13 @@ public class VendaPanel extends JPanel {
 
         btnRefresh.addActionListener(e -> loadData());
 
-        // Initial Load
         loadData();
     }
 
     private void loadData() {
         tableModel.setRowCount(0);
         try {
-            List<Venda> vendas = vendaService.BuscaGeral(); //
+            List<Venda> vendas = vendaService.BuscaGeral();
             for (Venda v : vendas) {
                 tableModel.addRow(new Object[]{
                         v.getId(),
@@ -97,7 +106,7 @@ public class VendaPanel extends JPanel {
         int selectedRow = table.getSelectedRow();
         if (selectedRow != -1) {
             Integer id = (Integer) tableModel.getValueAt(selectedRow, 0);
-            return vendaService.BuscaPorId(id); //
+            return vendaService.BuscaPorId(id);
         }
         JOptionPane.showMessageDialog(this, "Selecione uma venda na lista.");
         return null;

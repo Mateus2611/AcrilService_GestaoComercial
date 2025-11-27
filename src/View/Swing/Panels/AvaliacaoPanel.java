@@ -10,6 +10,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -27,7 +29,6 @@ public class AvaliacaoPanel extends JPanel {
 
         setLayout(new BorderLayout());
 
-        // --- Toolbar ---
         JToolBar toolBar = new JToolBar();
         toolBar.setFloatable(false);
 
@@ -44,8 +45,7 @@ public class AvaliacaoPanel extends JPanel {
 
         add(toolBar, BorderLayout.NORTH);
 
-        // --- Table ---
-        // Columns: ID, Sale ID, Title, Rating, Date
+        //Colunas
         String[] columns = {"ID", "ID Venda", "Título", "Nota", "Data"};
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
@@ -54,6 +54,16 @@ public class AvaliacaoPanel extends JPanel {
             }
         };
         table = new JTable(tableModel);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        table.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    Avaliacao a = getSelectedAvaliacao();
+                    if (a != null) openDialog(a);
+                }
+            }
+        });
 
         JTableHeader header = table.getTableHeader();
         header.setFont(header.getFont().deriveFont(Font.BOLD));
@@ -62,7 +72,6 @@ public class AvaliacaoPanel extends JPanel {
 
         add(new JScrollPane(table), BorderLayout.CENTER);
 
-        // --- Actions ---
         btnAdd.addActionListener(e -> openDialog(null));
 
         btnEdit.addActionListener(e -> {
@@ -74,7 +83,7 @@ public class AvaliacaoPanel extends JPanel {
 
         btnRefresh.addActionListener(e -> loadData());
 
-        // Initial Load
+        //Carregamento inicial
         loadData();
     }
 
