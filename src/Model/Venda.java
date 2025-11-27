@@ -103,7 +103,7 @@ public class Venda {
 
     public enum StatusPagamento {
         APROVADO,
-        REJEITADO,
+        CANCELADO,
         PENDENTE,
         EXPIRADO
     }

@@ -102,7 +102,7 @@ public class VendaDialog extends JDialog {
             int id = Integer.parseInt(txtIdOrcamento.getText());
             Orcamento o = orcamentoService.BuscaPorId(id); //
             if (o != null) {
-                lblOrcamentoInfo.setText("<html>Cliente: " + o.getNomeCliente() + "<br>Valor: R$ " + o.getValor() + "</html>");
+                lblOrcamentoInfo.setText("<html>Cliente: " + o.getNomeCliente() + "<br>Valor: R$ " + o.getValor() + "<br>Status: " + o.getStatus() + "<br>Validade: " + o.getDataValidade() + "</html>");
             } else {
                 lblOrcamentoInfo.setText("Orçamento não encontrado.");
             }

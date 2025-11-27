@@ -81,7 +81,7 @@ public class ProdutoPanel extends JPanel {
         try {
             List<Produto> produtos = produtoService.BuscaGeral(); //
             for (Produto p : produtos) {
-                tableModel.addRow(new Object[]{p.getId(), p.getNome(), p.getValor()});
+                tableModel.addRow(new Object[]{p.getId(), p.getNome(), String.format("R$ %.2f", p.getValor())});
             }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Erro ao buscar produtos: " + ex.getMessage());

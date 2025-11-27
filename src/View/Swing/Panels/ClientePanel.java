@@ -26,7 +26,7 @@ public class ClientePanel extends JPanel {
         toolBar.setFloatable(false);
 
         JButton btnAdd = new JButton("Novo Cliente");
-        JButton btnEdit = new JButton("Editar");
+        JButton btnEdit = new JButton("Informações do Cliente");
         JButton btnToggleStatus = new JButton("Ativar/Inativar");
         JButton btnRefresh = new JButton("Atualizar Lista");
 
@@ -39,7 +39,6 @@ public class ClientePanel extends JPanel {
         add(toolBar, BorderLayout.NORTH);
 
         // --- Table ---
-        // Columns: ID, Name, Type, City/State, Status
         String[] columns = {"ID", "Nome", "Tipo", "Localização", "Status"};
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
@@ -66,13 +65,13 @@ public class ClientePanel extends JPanel {
 
         btnToggleStatus.addActionListener(e -> toggleStatus());
 
-        btnRefresh.addActionListener(e -> loadData());
+        btnRefresh.addActionListener(e -> loadData(null));
 
         // Initial Load
-        loadData();
+        loadData(null);
     }
 
-    private void loadData() {
+    private void loadData(Integer id) {
         tableModel.setRowCount(0);
         try {
             // Fetch all clients including embedded Address info
@@ -80,7 +79,7 @@ public class ClientePanel extends JPanel {
             for (Cliente c : clientes) {
                 String localizacao = "N/A";
                 if (c.getEndereco() != null) {
-                    localizacao = c.getEndereco().getCidade() + " - " + c.getEndereco().getEstado();
+                    localizacao = c.getEndereco().Logradouro + ", " + c.getEndereco().Bairro + ", " + c.getEndereco().Cidade + " - " + c.getEndereco().Estado + ", " + c.getEndereco().Cep ;
                 }
 
                 tableModel.addRow(new Object[]{
@@ -125,7 +124,7 @@ public class ClientePanel extends JPanel {
             } else {
                 clienteService.AtivarCliente(id); //
             }
-            loadData();
+            loadData(null);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Erro ao alterar status: " + ex.getMessage());
         }
@@ -135,7 +134,7 @@ public class ClientePanel extends JPanel {
         ClienteDialog dialog = new ClienteDialog((Frame) SwingUtilities.getWindowAncestor(this), clienteService, cliente);
         dialog.setVisible(true);
         if (dialog.isSaved()) {
-            loadData();
+            loadData(null);
         }
     }
 }

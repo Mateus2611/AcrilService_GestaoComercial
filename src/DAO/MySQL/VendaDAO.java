@@ -21,8 +21,8 @@ public class VendaDAO {
 
     public Venda Criar(Venda objeto, Integer prazo) {
         PreparedStatement statement = null;
-        objeto.setDataCriacao(Date.valueOf(LocalDate.now()));
-        objeto.setPrazoPagamento(Date.valueOf(LocalDate.now().plusDays(prazo)));
+        Date dataCriacao = Date.valueOf(LocalDate.now());
+        Date dataPrazo = VerificarValidade(dataCriacao, prazo);
 
         try {
             statement = _connection.prepareStatement(
@@ -33,8 +33,8 @@ public class VendaDAO {
             );
 
             statement.setInt(1, objeto.getIdOrcamento());
-            statement.setDate(2, objeto.getDataCriacao());
-            statement.setDate(3, objeto.getPrazoPagamento());
+            statement.setDate(2, dataCriacao);
+            statement.setDate(3, dataPrazo);
 
             int rowsAffected = statement.executeUpdate();
 
@@ -189,5 +189,13 @@ public class VendaDAO {
         } finally {
             ConexaoDb.closeStatement(statement);
         }
+    }
+
+    static Date VerificarValidade(Date dataCriacao, Integer prazo) {
+
+        if (!dataCriacao.before(Date.valueOf(LocalDate.now().plusDays(prazo))))
+            throw new RuntimeException("Não foi possível criar a venda. Data de prazo é menor que a data de criação. \nData de criação atual: " + dataCriacao);
+
+        return Date.valueOf(LocalDate.now().plusDays(prazo));
     }
 }
