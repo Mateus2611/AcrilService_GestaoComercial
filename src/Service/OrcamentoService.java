@@ -148,7 +148,10 @@ public class OrcamentoService {
             throw new RuntimeException("Objeto vazio. Preencha as informações.");
 
         try {
-            _orcamentoDao.BuscaId(id);
+            Orcamento validation = _orcamentoDao.BuscaId(id);
+
+            if (validation.getStatus().toString().equalsIgnoreCase("EXPIRADO"))
+                throw new RuntimeException("Atualização recusada. Orçamento expirado no dia: " + validation.getDataValidade());
 
             return _orcamentoDao.AtualizarStatus(id, objeto);
         } catch (Exception e) {

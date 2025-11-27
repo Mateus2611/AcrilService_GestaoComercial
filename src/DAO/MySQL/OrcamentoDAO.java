@@ -18,6 +18,8 @@ public class OrcamentoDAO {
 
     public Orcamento Criar(Orcamento objeto, Integer validade) {
         PreparedStatement statement = null;
+        Date dataCriacao = Date.valueOf(LocalDate.now());
+        Date dataValidade = VerificarValidade(dataCriacao, validade);
 
         try {
             statement = _connection.prepareStatement(
@@ -28,7 +30,7 @@ public class OrcamentoDAO {
             );
 
             statement.setInt(1, objeto.getIdCliente());
-            statement.setDate(2, Date.valueOf(LocalDate.now()));
+            statement.setDate(2, dataCriacao);
             statement.setDate(3, Date.valueOf(LocalDate.now().plusDays(validade)));
             statement.setBigDecimal(4, objeto.getValor());
             statement.setBigDecimal(5, objeto.getDesconto());
@@ -171,5 +173,13 @@ public class OrcamentoDAO {
         } finally {
             ConexaoDb.closeStatement(statement);
         }
+    }
+
+    static Date VerificarValidade(Date dataCriacao, Integer validade) {
+
+        if (!dataCriacao.before(Date.valueOf(LocalDate.now().plusDays(validade))))
+            throw new RuntimeException("Não foi possível criar o orçamento. Data de validade é menor que a data de criação. \nData de criação atual: " + dataCriacao);
+
+        return Date.valueOf(LocalDate.now().plusDays(validade));
     }
 }

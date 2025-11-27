@@ -40,7 +40,7 @@ public class OrcamentoPanel extends JPanel {
         toolBar.setFloatable(false);
 
         JButton btnAdd = new JButton("Novo Orçamento");
-        JButton btnDetails = new JButton("Ver Detalhes / Editar");
+        JButton btnDetails = new JButton("Detalhes Orçamento");
         JButton btnRefresh = new JButton("Atualizar Lista");
 
         toolBar.add(btnAdd);
@@ -50,7 +50,6 @@ public class OrcamentoPanel extends JPanel {
         add(toolBar, BorderLayout.NORTH);
 
         // --- Table ---
-        // Columns: ID, Client Name, Creation Date, Expiration Date, Status, Total Value
         String[] columns = {"ID", "Cliente", "Data Criação", "Validade", "Status", "Valor Total"};
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
