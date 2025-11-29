@@ -32,6 +32,8 @@ public class OrcamentoDialog extends JDialog {
     private DefaultTableModel productTableModel;
     private List<OrcamentoProduto> tempProducts = new ArrayList<>();
 
+    JButton btnAddProd;
+
     public OrcamentoDialog(Frame parent,
                            OrcamentoService orcService,
                            OrcamentoProdutoService orcProdService,
@@ -92,7 +94,7 @@ public class OrcamentoDialog extends JDialog {
         cbProdutos = new JComboBox<>();
         loadProdutos(prodService);
         txtQuantidade = new JTextField("1", 5);
-        JButton btnAddProd = new JButton("Adicionar Produto");
+        btnAddProd = new JButton("Adicionar Produto");
 
         prodSelectPanel.add(new JLabel("Produto:"));
         prodSelectPanel.add(cbProdutos);
@@ -107,6 +109,11 @@ public class OrcamentoDialog extends JDialog {
         productTableModel = new DefaultTableModel(cols, 0);
         JTable prodTable = new JTable(productTableModel);
         centerPanel.add(new JScrollPane(prodTable), BorderLayout.CENTER);
+
+        if (orcamento != null) {
+            List<OrcamentoProduto> orcamentoProduto = orcamentoProdutoService.BuscaOrcamentoId(orcamento.getId());
+            loadProdutosOrcamento(prodService, orcamentoProduto);
+        }
 
         add(centerPanel, BorderLayout.CENTER);
 
@@ -190,6 +197,9 @@ public class OrcamentoDialog extends JDialog {
     private void setupEditingMode(OrcamentoService service, ProdutoService prodService) {
         cbClientes.setEnabled(false);
         txtValidade.setEnabled(false);
+        cbProdutos.setEnabled(false);
+        txtQuantidade.setEnabled(false);
+        btnAddProd.setEnabled(false);
 
         //Selecionar cliente
         for(int i=0; i<cbClientes.getItemCount(); i++) {
@@ -211,6 +221,22 @@ public class OrcamentoDialog extends JDialog {
     private void loadProdutos(ProdutoService service) {
         List<Produto> list = service.BuscaGeral();
         for (Produto p : list) cbProdutos.addItem(new ProdutoItem(p));
+    }
+
+    private void loadProdutosOrcamento (ProdutoService service, List<OrcamentoProduto> orcamentoProduto) {
+
+        for (OrcamentoProduto op : orcamentoProduto) {
+            ProdutoItem item = new ProdutoItem(service.BuscaPorId(op.getIdProduto()));
+            BigDecimal subtotal = item.produto.getValor().multiply(new BigDecimal(op.getQuantidade()));
+
+            productTableModel.addRow(new Object[]{
+                    item.produto.getId(),
+                    item.produto.getNome(),
+                    item.produto.getValor(),
+                    op.getQuantidade(),
+                    subtotal
+            });
+        }
     }
 
     class ClienteItem {

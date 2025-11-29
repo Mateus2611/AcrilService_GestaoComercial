@@ -43,6 +43,7 @@ public class ClienteDialog extends JDialog {
 
         gbc.gridx = 0;
         gbc.gridy = 0;
+        gbc.weightx = 1.0;
         pnlDados.add(new JLabel("Nome Completo:"), gbc);
         txtNome = new JTextField(20);
         gbc.gridx = 1;
@@ -50,6 +51,7 @@ public class ClienteDialog extends JDialog {
 
         gbc.gridx = 0;
         gbc.gridy = 1;
+        gbc.weightx = 1.0;
         pnlDados.add(new JLabel("Tipo (CPF/CNPJ):"), gbc);
         cbTipo = new JComboBox<>(Cliente.TipoCliente.values());
         gbc.gridx = 1;
@@ -61,6 +63,7 @@ public class ClienteDialog extends JDialog {
 
         gbc.gridx = 0;
         gbc.gridy = 0;
+        gbc.weightx = 1.0;
         pnlEndereco.add(new JLabel("CEP (apenas números):"), gbc);
         txtCep = new JTextField(10);
 
@@ -69,6 +72,7 @@ public class ClienteDialog extends JDialog {
 
         gbc.gridx = 0;
         gbc.gridy = 1;
+        gbc.weightx = 1.0;
         pnlEndereco.add(new JLabel("Logradouro:"), gbc);
         txtLogradouro = new JTextField(20);
         gbc.gridx = 1;
@@ -76,6 +80,7 @@ public class ClienteDialog extends JDialog {
 
         gbc.gridx = 0;
         gbc.gridy = 2;
+        gbc.weightx = 1.0;
         pnlEndereco.add(new JLabel("Bairro:"), gbc);
         txtBairro = new JTextField(15);
         gbc.gridx = 1;
@@ -83,6 +88,7 @@ public class ClienteDialog extends JDialog {
 
         gbc.gridx = 0;
         gbc.gridy = 3;
+        gbc.weightx = 1.0;
         pnlEndereco.add(new JLabel("Cidade:"), gbc);
         txtCidade = new JTextField(15);
         gbc.gridx = 1;
@@ -90,6 +96,7 @@ public class ClienteDialog extends JDialog {
 
         gbc.gridx = 0;
         gbc.gridy = 4;
+        gbc.weightx = 1.0;
         pnlEndereco.add(new JLabel("Estado (UF):"), gbc);
         txtEstado = new JTextField(5);
         gbc.gridx = 1;

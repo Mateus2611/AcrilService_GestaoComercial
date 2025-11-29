@@ -3,6 +3,8 @@ package Service;
 import DAO.MySQL.OrcamentoProdutoDAO;
 import Model.OrcamentoProduto;
 
+import java.util.List;
+
 
 public class OrcamentoProdutoService {
 
@@ -18,6 +20,14 @@ public class OrcamentoProdutoService {
 
         try {
             return _orcamentoProdutoDao.AdicionarProduto(objeto);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    public List<OrcamentoProduto> BuscaOrcamentoId(Integer idORcamento) {
+        try {
+            return _orcamentoProdutoDao.BuscaOrcamentoId(idORcamento);
         } catch (RuntimeException e) {
             throw new RuntimeException(e.getMessage());
         }
