@@ -200,6 +200,7 @@ public class OrcamentoDialog extends JDialog {
         cbProdutos.setEnabled(false);
         txtQuantidade.setEnabled(false);
         btnAddProd.setEnabled(false);
+        txtDesconto.setEnabled(false);
 
         //Selecionar cliente
         for(int i=0; i<cbClientes.getItemCount(); i++) {
